@@ -1,0 +1,20 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+    <h1>Search Notes</h1>
+    <form method="get" action="{% url 'notes:note-search' %}">
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search notes...">
+        <button type="submit">Search</button>
+    </form>
+    {% if notes %}
+        <ul>
+        {% for note in notes %}
+            <li><a href="{% url 'notes:note-detail' note.id %}">{{ note.title }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No notes found matching your search criteria.</p>
+    {% endif %}
+    <a href="{% url 'notes:notebook-list' %}">Back to List</a>
+    
+{% endblock %}

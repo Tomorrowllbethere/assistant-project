@@ -1,0 +1,36 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert-{{ message.tags }}" {% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form action="{% url 'custom_auth:login' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <label> Username:
+            {{ form.username }}
+        </label>
+    </div>
+
+    <div>
+        <label>Password:
+            {{ form.password }}
+        </label>
+    </div>
+
+    <div class="grid">
+        <button type="submit"class="btn btn-action" >Submit</button>
+        <button type="reset" class="btn btn-action">Reset</button>
+    </div>
+    <div class="small text-center">
+        <a href="{% url 'custom_auth:password_reset' %}" class="text-center"><i>Forgot Password?</i></a>
+    </div>
+</form>
+
+{% endblock %}

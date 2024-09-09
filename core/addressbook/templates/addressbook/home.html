@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Contacts</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'custom_auth/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{% url 'features:main' %}" role="button" class="nav-button" > Go back to the main page </a>
+        </nav>
+    </header>
+    <main>
+        <h2 class="hello">Welcome to My Contacts!</h2>
+        <nav class="main-navigation ">
+            <ul>
+                <li><a  href="{% url 'addressbook:add_contact' %}" role="button"class="nav-button">Add Contact</a></li>
+                <li><a  href="{% url 'addressbook:birthday_list' %}" role="button"class="nav-button">Birthday List</a></li>
+                <li><a  href="{% url 'addressbook:search_contact' %}" role="button" class="nav-button">Search Contact</a></li>
+                <li><a  href="{% url 'addressbook:contact_list' %}" role="button" class="nav-button">All Contacts</a></li>
+            </ul>
+        </nav>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </main>
+    <footer>
+        <p>&copy; 2024 My Contacts</p>
+    </footer>
+

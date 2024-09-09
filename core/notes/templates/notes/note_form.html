@@ -1,0 +1,25 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+   
+  <div class="info-cont">
+    <h1>{% if note %}Edit Note{% else %}Create Note{% endif %}</h1>
+    <form method="post">
+      {% csrf_token %}
+      <!-- {{ form.as_p }} -->
+
+      <li class="field">title: {{ form.title }}</li>
+      <li class="field">content: {{ form.content }}</li>
+      <li class="field">starts: {{ form.start_date }}</li>
+      <li class="field">ends: {{ form.end_date }}</li>
+      <li class="field">tags: {{ form.tags }}</li>
+      <li class="field">add new tags: {{ form.new_tags }}</li>
+      <li class="field">choose notebook: {{ form.notebook}}</li>
+      <button type="submit">{% if note %}Update{% else %}Create{% endif %}</button>
+      <button class="but" type="reset" class="secondary">Reset</button>
+    </form>
+
+
+</div>      
+<a href="{% url 'notes:notebook-list' %}">Back to list</a>  
+{% endblock %}

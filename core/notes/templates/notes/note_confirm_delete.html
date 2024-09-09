@@ -1,0 +1,14 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+
+    <h1>Are you sure you want to delete "{{ note.title }}"?</h1>
+    <p>This action cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, delete</button>
+    </form>
+    <a href="{% url 'notes:note_detail' note.id %}">Cancel</a>
+    <a href="{% url 'notes:notebook-list' %}">Back to list</a>
+
+{% endblock %}

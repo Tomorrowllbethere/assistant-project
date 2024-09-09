@@ -1,0 +1,12 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+    <h2>Birthday List</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="days">Enter the number of days:</label>
+        <input type="number" name="days" id="days" required>
+        <button type="submit">Get List</button>
+    </form>
+    <a href="{% url 'addressbook:home' %}">Back to home</a>
+{% endblock %}

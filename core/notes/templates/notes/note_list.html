@@ -1,0 +1,19 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+    <h1>Note List</h1>
+    <h3>for {{tag}}</h3>
+    {% if notes %}
+    <span class="container-contact">
+        <ul>
+        {% for note in notes %}
+            <li class="note-content"><a href="{% url 'notes:note-detail' note.id %}">{{ note.title }}</a></li>
+        {% endfor %}
+        </ul>
+        <a class="btn btn-action" href="{% url 'notes:note-create' %}">Add Note</a>
+    </span>
+    {% endif %}
+
+{% endblock %}
+
+

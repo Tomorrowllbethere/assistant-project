@@ -1,0 +1,41 @@
+{% extends "custom_auth/base.html" %}
+
+{% block content %}
+<h1 class="hello">Profile page: {{user.username}}</h1>
+
+
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="photo-cont" >
+                <img src="{{ user.profile.avatar.url }}" alt="avatar of user"  width="350" height="350"/>
+            </div>
+            <div class="field">
+                <label class="small mb-1">Change Avatar:</label>
+                {{ profile_form.avatar }}
+                <span>{{ profile_form.errors.avatar }}</span>
+            </div>
+        </div>
+        <div class="info-cont">
+            <div class="field">
+                <label class="date_birth">Birthday date:</label>
+                {{ profile_form.date_birth }}
+            </div> 
+
+            <div class="field">
+                <label class="address">Your address:</label>
+                {{ profile_form.address }}
+            </div> 
+            
+
+        </div>
+        <div class="button-group">
+            <button type="submit" class="btn btn-action">Save Changes</button>
+            <button type="reset" class="btn btn-action">Reset</button>
+        </div>
+
+    </form>
+
+{% endblock content %}
+

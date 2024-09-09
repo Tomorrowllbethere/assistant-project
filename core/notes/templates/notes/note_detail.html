@@ -1,0 +1,52 @@
+{% extends "custom_auth/base.html" %}
+
+
+{% block content %}
+{% load static %}
+<div class="note-container">
+    <h1 class="note-title">{{ note.title }}</h1>
+    <p class="note-content">{{ note.content }}</p>
+
+    <!-- Відображення тегів -->
+    <p class="note-tags">
+        <strong>Tags: </strong>
+        {% for tag in note.tags.all %}
+           <a href="{% url 'notes:tag-search' tag.pk %}"  class="tag" type="button">{{ tag.tag }}</a>{% if not forloop.last %},
+           {% endif %}
+        {% endfor %}
+    </p>
+
+    <!-- Відображення відліку часу -->
+    {% if note.start_date > now %}
+        <p class="note-timing">
+            <strong>It starts in:</strong> 
+            <span id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}"></span>
+        </p>
+        <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
+    {% elif note.end_date %}
+        <p class="note-timing">
+            <strong>It ends in:</strong> 
+            <span id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}"></span>
+        </p>
+        <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
+    {% else %}
+        <p class="note-no-deadline">Take your time. You haven't any deadline.</p>
+    {% endif %}
+
+    <!-- Статус нотатки -->
+    <p class="note-status"><strong>Status:</strong> {{ note.status|yesno:"Completed,Not completed" }}</p>
+
+    <!-- Блок з кнопками -->
+    <div class="button-group">
+        <a href="{% url 'notes:note-update' note.pk %}" class="btn btn-action">Edit</a>
+        <form method="post" action="{% url 'notes:note-delete' note.pk %}" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-action">Delete</button>
+        </form>
+    </div>
+
+    <!-- Кнопка Back to list під кнопками Edit і Delete -->
+    <a class="btn btn-back" href="{% url 'notes:notebook-list' %}">Back to list</a>
+</div>
+
+{% endblock %}

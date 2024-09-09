@@ -1,0 +1,22 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+    <h2>Add Contact</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ all_contact_form.as_p }}
+        <h3>Phone Numbers</h3>
+        {{ phone_formset.management_form }}
+        {% for form in phone_formset %}
+            {{ form.as_p }}
+        {% endfor %}
+        <h3>Email Addresses</h3>
+        {{ email_formset.management_form }}
+        {% for form in email_formset %}
+            {{ form.as_p }}
+        {% endfor %}
+        <button type="submit">Save Contact</button>
+    </form>
+
+    <a href="{% url 'addressbook:home' %}">Back to home</a>
+{% endblock %}

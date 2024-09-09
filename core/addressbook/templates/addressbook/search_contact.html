@@ -1,0 +1,37 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+    <h2>Search Contacts</h2>
+    <form method="get" action="{% url 'addressbook:search_contact' %}">
+        <input type="text" name="q" placeholder="Search contacts..." value="{{ request.GET.q }}">
+        <button type="submit">Search</button>
+    </form>
+    {% if contacts %}
+        <ul>
+            {% for contact in contacts %}
+                <li>
+                    <strong>{{ contact.fullname }}</strong><br>
+                    Address: {{ contact.address }}<br>
+                    Birthday: {{ contact.birthday }}<br>
+                    <h4>Phone Numbers:</h4>
+                    <ul>
+                        {% for phone in contact.phones.all %}
+                            <li>{{ phone.ntel }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h4>Email Addresses:</h4>
+                    <ul>
+                        {% for email in contact.emails.all %}
+                            <li>{{ email.mail }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No contacts found.</p>
+    {% endif %}
+
+
+    <a href="{% url 'addressbook:home' %}">Back to home</a>
+{% endblock %}

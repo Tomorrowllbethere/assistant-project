@@ -1,0 +1,16 @@
+
+{% extends "cloud/base.html" %}
+{% block content %}
+
+  <h2>Uploaded Files</h2>
+
+  <ul>
+    {% for file in files %}
+      <li>
+        <a href="{{ file.file.url }}">{{ file.file.public_id }}</a>
+        <a href="{% url 'cloud:delete' file.file.public_id %}" role="button" class="contrast">Delete file</a>  
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'cloud:upload_file' %}">Upload new file</a>
+{% endblock %}

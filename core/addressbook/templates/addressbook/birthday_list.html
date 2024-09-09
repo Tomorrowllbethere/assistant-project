@@ -1,0 +1,15 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+    <h2>Birthday List for next {{ days }} days</h2>
+    {% if contacts %}
+        <ul>
+            {% for contact in contacts %}
+                <li>{{ contact.fullname }} - {{ contact.birthday }}</li>
+                {% endfor %}
+        </ul>
+    {% else %}
+        <p>No contacts found.</p>
+    {% endif %}
+    <a href="{% url 'addressbook:home' %}">Back to address book</a>
+{% endblock %}
