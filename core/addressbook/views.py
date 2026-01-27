@@ -13,9 +13,10 @@ def home(request):
 
 @login_required
 def contact_profile(request, pk):
-    if request.method =='POST':
-        contact = AllContact.objects.get(pk=pk)
-        return render(request, 'addressbook/profile.html', {'contact': contact})
+    # if request.method =='POST':
+        contact = AllContact.objects.filter(pk=pk).first()
+        return render(request, 'addressbook/profile_contact.html', {'contact': contact})
+  
 
 @login_required
 def add_contact(request):

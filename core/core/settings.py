@@ -162,6 +162,13 @@ cloudinary.config(
     api_secret=os.environ.get('CLOUDINARY_API_SECRET')
 )
 
+DEFAULT_AVATARS = {
+    'female': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-1.png',
+    'male': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_1_sqybgi.png',
+    'neutral': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-4.png',
+}
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')

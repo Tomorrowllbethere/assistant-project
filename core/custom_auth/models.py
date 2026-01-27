@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 # Extending User Model Using a One-To-One Link
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(default='media/gus.png', upload_to='profile_images')
+    avatar = models.ImageField(default='core/media/avatar-5261896_1920_2.png', upload_to='profile_images')
     date_birth = models.DateField(default='2001-01-01') 
     address = models.CharField(default='my address')
     # phone_number= models.CharField()

@@ -1,36 +1,107 @@
-<!-- templates/myapp/upload_file.html -->
 {% extends "cloud/base.html" %}
 
 {% block content %}
-  <h2>Upload File</h2>
-  <button id="upload_widget" class="cloudinary-button">Upload files</button>
-
-  <form id="file_form" method="post" action="{% url 'cloud:save_file' %}">
+<h2>Upload File</h2>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="hidden" id="public_id" name="public_id">
-    <input type="hidden" id="url" name="url">
-    <input type="hidden" id="resource_type" name="resource_type">
-  </form>
+    <label for="file">Upload File:</label>
+    <input type="file" name="file" id="file" accept="image/*" required>
+    
+    <!-- Попередній перегляд фото -->
+    <div id="imagePreview" style="display: none;">
+        <h3>Preview:</h3>
+        <img id="previewImage" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;">
+    </div>
 
+    <label for="folder">Select Folder:</label>
+    <select name="folder" id="folder">
+        <option value="">No Folder</option>
+        {% for folder in folders %}
+            <option value="{{ folder.id }}">{{ folder.name }}</option>
+        {% endfor %}
+    </select>
 
-  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+    <button type="submit">Upload</button>
 
-    <script type="text/javascript">  
-        var myWidget = cloudinary.createUploadWidget({
-            cloudName: 'dhb8qlske', 
-            uploadPreset: 'ml_default'
-        }, (error, result) => { 
-            if (!error && result && result.event === "success") {
-        document.getElementById('public_id').value = result.info.public_id;
-        document.getElementById('url').value = result.info.secure_url;
-        document.getElementById('resource_type').value = result.info.resource_type;
-        document.getElementById('file_form').submit();     
-        console.log('Done! Here is the image info: ', result.info); 
-            }
-        });
+    <!-- Прогрес завантаження -->
+    <div id="uploadProgress" style="display:none;">
+        <p>Uploading... <span id="progressPercentage">0%</span></p>
+        <progress id="progressBar" value="0" max="100"></progress>
+    </div>
 
-        document.getElementById("upload_widget").addEventListener("click", function(){
-            myWidget.open();
-        }, false);
-    </script>
+    <p id="errorMessage" style="color: red; display: none;"></p>
+    <p id="successMessage" style="color: green; display: none;">Upload successful!</p>
+</form>
+
+<script>
+document.getElementById('file').addEventListener('change', function(event) {
+    // Перевірка розширення файлу
+    const file = event.target.files[0];
+    const allowedExtensions = ['image/jpeg', 'image/png', 'image/gif'];
+    
+    if (file && allowedExtensions.includes(file.type)) {
+        // Попередній перегляд фото
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('previewImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        // Очищення попередніх повідомлень про помилки
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+    } else {
+        // Помилка типу файлу
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('errorMessage').textContent = 'File type is not supported. Please upload an image file (JPEG, PNG, GIF).';
+    }
+});
+function getCSRFToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    return csrfToken;
+}
+
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Запобігаємо стандартній відправці форми
+
+    const file = document.getElementById('file').files[0];
+    const folderId = document.getElementById('folder').value;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folderId);
+
+    // Показуємо прогрес завантаження
+    document.getElementById('uploadProgress').style.display = 'block';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/cloud/save/', true);
+
+    // Додаємо CSRF токен до заголовків запиту
+    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+
+    // Відслідковуємо прогрес завантаження
+    xhr.upload.onprogress = function(event) {
+        if (event.lengthComputable) {
+            const percentage = Math.round((event.loaded / event.total) * 100);
+            document.getElementById('progressPercentage').textContent = `${percentage}%`;
+            document.getElementById('progressBar').value = percentage;
+        }
+    };
+
+    // Обробка відповіді від сервера
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('uploadProgress').style.display = 'none';
+        } else {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = 'There was an error uploading the file. Please try again.';
+        }
+    };
+
+    xhr.send(formData);  // Відправляємо дані на сервер
+});
+</script>
+
 {% endblock %}

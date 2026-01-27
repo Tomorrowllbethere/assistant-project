@@ -50,15 +50,17 @@ def week_upcomming_birthday(request):
 def welcome(request):
     return render(request, 'custom_auth/welcome.html')
 
-@login_required
-def main(request):
-    # Отримання інформації про тарифи (залежно від реалізації)
-    rates = rate_view(request)
-    upcoming_birthday= week_upcomming_birthday(request)
 
-    # Відображення даних на сторінці
-    return render(request, 'custom_auth/index.html', context={
-        "rates": rates,
-        "upcoming": upcoming_birthday
-    })
+def main(request):
+    if request.user.is_authenticated:
+        # Отримання інформації про тарифи (залежно від реалізації)
+        rates = rate_view(request)
+        upcoming_birthday= week_upcomming_birthday(request)
+
+        # Відображення даних на сторінці
+        return render(request, 'custom_auth/index.html', context={
+            "rates": rates,
+            "upcoming": upcoming_birthday
+        })
+    return render(request, 'custom_auth/welcome.html')
 

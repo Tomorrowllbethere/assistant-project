@@ -1,0 +1,12 @@
+{% extends "cloud/base.html" %}
+{% block content %}
+
+<h1>Move {{ file.file.name }} to another folder</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Move</button>
+</form>
+
+{% endblock %}

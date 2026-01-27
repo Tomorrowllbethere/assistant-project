@@ -4,13 +4,35 @@
 
   <h2>Uploaded Files</h2>
 
-  <ul>
+  <h1>Your Files</h1>
+
+<ul>
     {% for file in files %}
+
       <li>
-        <a href="{{ file.file.url }}">{{ file.file.public_id }}</a>
-        <a href="{% url 'cloud:delete' file.file.public_id %}" role="button" class="contrast">Delete file</a>  
+        {{ file.file }} - 
+        {% if file.folder %}
+            {{ file.folder.name }}
+        {% else %}
+            No Folder
+        {% endif %}
+        <a href="{% url 'cloud:move_file' file.id %}">Move</a>
+        <a href="{% url 'cloud:delete_file' file.id %}">Delete</a>
       </li>
+        
     {% endfor %}
-  </ul>
-  <a href="{% url 'cloud:upload_file' %}">Upload new file</a>
+</ul>
+
+<a href="{% url 'cloud:upload_file' %}">Add new files</a>
+
+
+
+<h2>Folders</h2>
+<ul>
+    {% for folder in folders %}
+        <li><a href="{% url 'cloud:folder_files' folder.id %}"></a>{{ folder.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'cloud:create_folder' %}">Create Folder</a>
+  
 {% endblock %}

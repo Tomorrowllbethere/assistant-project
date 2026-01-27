@@ -5,11 +5,16 @@
     {% if contacts %}
         <ul>
             {% for contact in contacts %}
-                <li>{{ contact.fullname }} - {{ contact.birthday }}</li>
+                <div class="contact-mini"> 
+                <div class="contact-info">
+                    <span class="line-info"><p class="contact-title">Contact:</p> <p class="contact-content"> {{ contact.fullname }}</p>
+                    </span> 
+                      <span class="line-info"><p class="contact-title">Age:</p> <p class="contact-content">{{ contact.birthday }} </p>
+                </div></div>
                 {% endfor %}
         </ul>
     {% else %}
         <p>No contacts found.</p>
     {% endif %}
-    <a href="{% url 'addressbook:home' %}">Back to address book</a>
+    <a href="{% url 'addressbook:home' %}" class="btn btn-back">Back to address book</a>
 {% endblock %}

@@ -2,7 +2,7 @@
 name = "personal-assistant"
 version = "0.1.0"
 description = ""
-authors = ["Valentina Rudenko <valentino4ka2009@gmail.com>, Serhii Rezvaniuk <o_serg@ukr.net>, Yuliia Diakiv <uliadiakiv@gmail.com>, Ksenia Kosarevska <kosarevskayakseniia@gmail.com>"]
+authors = ["Yuliia Diakiv <uliadiakiv@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

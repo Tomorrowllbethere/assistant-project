@@ -2,9 +2,15 @@
 
 {% block content %}
     <h2>Add Contact</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ all_contact_form.as_p }}
+        <h3>Fullname</h3>
+        {{ all_contact_form.fullname}}
+        <h3>Birthday</h3>
+        {{ all_contact_form.birthday}}
+        <h3>Address</h3>
+        {{ all_contact_form.address}}
+
         <h3>Phone Numbers</h3>
         {{ phone_formset.management_form }}
         {% for form in phone_formset %}
@@ -15,8 +21,30 @@
         {% for form in email_formset %}
             {{ form.as_p }}
         {% endfor %}
+      
+        <div>
+            <label>Виберіть стандартний аватар:</label>
+            <div class="avatar-options">
+                {% for value, label in all_contact_form.avatar_url.field.choices %}
+                    <label>
+                        <input type="radio" name="avatar_url" value="{{ value }}" {% if all_contact_form.avatar_url.value == value %} checked{% endif %}>
+                        <img src="https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/{{ value }}.jpg" alt="{{ label }}" class="avatar-thumbnail">
+                        {{ label }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div>
+            <label>{{ all_contact_form.avatar.label }}</label>
+            {{ all_contact_form.avatar }}
+        </div>
+
         <button type="submit">Save Contact</button>
+   
     </form>
 
-    <a href="{% url 'addressbook:home' %}">Back to home</a>
+
+
+    <a href="{% url 'addressbook:home' %}" class="btn btn-back">Back to home</a>
 {% endblock %}

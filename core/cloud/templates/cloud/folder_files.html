@@ -1,0 +1,12 @@
+{% extends "cloud/base.html" %}
+{% block content %}
+
+
+<h1>Files in {{ folder.name }}</h1>
+<ul>
+    {% for file in files %}
+        <li>{{ file.file.url }} <a href="{% url 'move_file' file.id %}">Move</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

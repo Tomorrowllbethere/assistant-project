@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Profile</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'custom_auth/css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'custom_auth/css/style.css' %}">
+    <script src="{% static 'custom_auth/js/script_profile.js' %}"></script>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Left Sidebar for Profile Picture and Info -->
+        <div class="profile-sidebar">
+            <div class="profile-pic">
+                {% load static %}
+                <img src="{{ contact.get_avatar_url }}" alt="User Avatar">
+                
+            </div>
+            <div class="basic-info">
+                <h2>Fullname:   {{ contact.fullname }}</h2>
+                <p>Email:   {{ contact.email }}</p>
+                <p>Phone:   {{ contact.phone }}</p>
+            </div>
+        </div>
+
+        <!-- Main Content Section for Description, Tags, etc. -->
+        <div class="profile-main">
+            <div class="description-section">
+                <h3>About</h3>
+                <p>{{ contact.description }}</p>
+            </div>
+
+            <div class="tags-section">
+                <h3>Group</h3>
+                <ul class="tags">
+                    {% for tag in contact.tags.all %}
+                        <li>{{ tag.tag }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="extra-info">
+                <h3>Additional Information</h3>
+                <p><strong>Birthday:</strong> {{ contact.birthday }}</p>
+                <p><strong>Address:</strong> {{ contact.address }}</p>
+                <p><strong>Social Media:</strong> {{ contact.social_media_links }}</p>
+                
+            </div>
+        </div>
+    </div>
+    <!-- Блок з кнопками -->
+    <div class="button-group">
+        <a href="{% url 'addressbook:edit_contact' contact.pk %}" class="btn btn-action">Edit</a>
+        <form method="post" action="{% url 'addressbook:delete_contact' contact.pk %}" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-action" onclick="return confirm('Are you sure you want to delete this contact?');">Delete</button>
+        </form>
+        
+    </div>
+
+    <!-- Кнопка Back to list під кнопками Edit і Delete -->
+    <a class="btn btn-back" href="{% url 'addressbook:home' %}">Back to list</a>
+
+    
+</body>
+</html>
