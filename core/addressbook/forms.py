@@ -14,32 +14,34 @@ class AllContactForm(forms.ModelForm):
         required=True,
         label='Виберіть дату'
     )
-    avatar = forms.ImageField(
+    avatar = forms.FileField(
         widget=forms.FileInput(attrs={'class': 'form-control'}),
         required=False,
-        label='Завантажити власний аватар'
+        label='Завантажити власне фото'
     )
-    
-    avatar_url = forms.ChoiceField(
-        choices=[('female', 'Avatar 1'), ('male', 'Avatar 2'), ('neutral', 'Avatar 3')],
-        required=False,
-        widget=forms.RadioSelect(attrs={'class': 'avatar-choice'})
+    # Це поле прийме URL обраного пресета. Ми робимо його CharField, 
+    # бо JS запише туди повний шлях до картинки.
+    avatar_url = forms.CharField(
+        required=False, 
+        widget=forms.HiddenInput() 
     )
 
     
 
     class Meta:
         model = AllContact
-        fields = ['fullname', 'address', 'birthday', 'avatar', 'avatar_url']
+        fields = ['fullname','gender', 'address', 'birthday', 'avatar', 'avatar_url']
+        widgets = {
+            'fullname': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}), # Випадаючий список
+        }
 
     def clean(self):
         cleaned_data = super().clean()
         avatar_url = cleaned_data.get("avatar_url")
         avatar = cleaned_data.get("avatar")
 
-        # Якщо не вибрано ні аватар із списку, ні завантажено власний
-        if not avatar_url and not avatar:
-            raise forms.ValidationError("Будь ласка, виберіть аватар або завантажте власний.")
         
         return cleaned_data
 

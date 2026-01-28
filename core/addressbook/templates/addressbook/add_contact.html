@@ -4,47 +4,76 @@
     <h2>Add Contact</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        
         <h3>Fullname</h3>
-        {{ all_contact_form.fullname}}
+        {{ all_contact_form.fullname }}
+
+        <h3>Gender</h3>
+        {{ all_contact_form.gender }}
+
         <h3>Birthday</h3>
-        {{ all_contact_form.birthday}}
+        {{ all_contact_form.birthday }}
+
         <h3>Address</h3>
-        {{ all_contact_form.address}}
+        {{ all_contact_form.address }}
 
         <h3>Phone Numbers</h3>
         {{ phone_formset.management_form }}
         {% for form in phone_formset %}
             {{ form.as_p }}
         {% endfor %}
+
         <h3>Email Addresses</h3>
         {{ email_formset.management_form }}
         {% for form in email_formset %}
             {{ form.as_p }}
         {% endfor %}
       
-        <div>
-            <label>Виберіть стандартний аватар:</label>
-            <div class="avatar-options">
-                {% for value, label in all_contact_form.avatar_url.field.choices %}
-                    <label>
-                        <input type="radio" name="avatar_url" value="{{ value }}" {% if all_contact_form.avatar_url.value == value %} checked{% endif %}>
-                        <img src="https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/{{ value }}.jpg" alt="{{ label }}" class="avatar-thumbnail">
-                        {{ label }}
+        <div class="mt-4">
+            <label><b>Виберіть стандартний аватар:</b></label>
+            <div class="avatar-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px;">
+                {% for url in presets %}
+                    <label style="cursor: pointer; text-align: center;">
+                        <input type="radio" name="selected_avatar_url" value="{{ url }}" style="display: none;" class="avatar-radio">
+                        <img src="{{ url }}" alt="Avatar" class="avatar-thumbnail" 
+                             style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid transparent; transition: 0.3s;">
                     </label>
                 {% endfor %}
             </div>
         </div>
         
-        <div>
-            <label>{{ all_contact_form.avatar.label }}</label>
+        <div class="mt-4">
+            <label><b>Або завантажте власне фото:</b></label>
             {{ all_contact_form.avatar }}
         </div>
 
-        <button type="submit">Save Contact</button>
-   
+        <button type="submit" class="btn btn-primary mt-4">Save Contact</button>
     </form>
 
+    <a href="{% url 'addressbook:home' %}" class="btn btn-back mt-3">Back to home</a>
 
+    <script>
+        // JS для візуального виділення вибраного аватара
+        document.querySelectorAll('.avatar-radio').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Скидаємо рамки у всіх
+                document.querySelectorAll('.avatar-thumbnail').forEach(img => {
+                    img.style.borderColor = 'transparent';
+                    img.style.transform = 'scale(1)';
+                });
+                // Додаємо рамку вибраному
+                if (this.checked) {
+                    const img = this.nextElementSibling;
+                    img.style.borderColor = '#007bff';
+                    img.style.transform = 'scale(1.1)';
+                }
+            });
+        });
+    </script>
 
-    <a href="{% url 'addressbook:home' %}" class="btn btn-back">Back to home</a>
+    <style>
+        .avatar-thumbnail:hover {
+            transform: scale(1.05);
+        }
+    </style>
 {% endblock %}

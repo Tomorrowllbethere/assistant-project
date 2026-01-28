@@ -102,7 +102,7 @@ def delete_file(request, public_id):
     try:
         media_file = MediaFile.objects.get(user=request.user, file=public_id)
         media_file.delete()
-        cloudinary.uploader.destroy(public_id)
+        
         messages.success(request, 'File deleted successfully!')
         return redirect('cloud:file_list')
     except MediaFile.DoesNotExist:
