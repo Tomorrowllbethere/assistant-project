@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from django.contrib.auth.models import User
 
 class Tag(models.Model):
     tag = models.CharField(max_length=255, unique=True)
@@ -11,7 +11,7 @@ class Tag(models.Model):
 
 class NoteList(models.Model):
     list_name = models.CharField(max_length= 225, default='Default Notebook')
-    
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # Додай цей рядок
     def __str__(self):
         return self.list_name
     

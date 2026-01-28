@@ -1,40 +1,39 @@
-
 {% extends "custom_auth/base.html" %}
 
-
 {% block content %}
-    <h2 class="hello">Notebooks</h2>
+    <h2 class="hello" style="text-align: center; margin-bottom: 40px;">Notebooks</h2>
 
-    {%  for notebook in notebooks %}
-            <div class="container-contact">
+    <div class="notebooks-wrapper">
+        {% for notebook in notebooks %}
+            <div class="container-contact glass-style">
                 <h3 class="note-title">{{ notebook.list_name }}</h3>
-                <!-- Форма для додавання нотатки в поточний блок -->
-                <form method="post" action="{% url 'notes:note-create' %}">
+                
+                <form method="post" action="{% url 'notes:note-create' %}" class="styled-form">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <input type="hidden" name="notebook_id" value="{{ notebook.id }}">
-                    <button class="btn btn-action" type="submit">Add Note</button>
+                    <button class="btn btn-action" style="width: 100%;" type="submit">Add Note</button>
                 </form>
 
-                <!-- Відображення нотаток, що належать до цього блоку -->
                 {% if notebook.notes.all %}
-                    <div class="notebook-list">
-                        <ul>
+                    <div class="notebook-list" style="margin-top: 20px;">
+                        <ul style="padding: 0;">
                             {% for note in notebook.notes.all %}
-                                <li><a  href="{% url 'notes:note-detail' note.pk %}">{{ note.title }}</a></li>
+                                <li style="list-style: none; margin: 10px 0;">
+                                    <a href="{% url 'notes:note-detail' note.pk %}" style="font-size: 1rem; opacity: 0.8;">
+                                        • {{ note.title }}
+                                    </a>
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
-                {% else %}
-                    <p>No notes in this notebook yet.</p>
                 {% endif %}
             </div>
-    {% endfor %}
-     <!-- Форма для створення нового блоку нотаток -->
-    <div class="container-contact">
-        <h3 class="notebook-name">create notebook</h3>     
-        <a type="button" class="btn btn-action" href="{% url 'notes:notebook-create' %}">add notebook </a>
+        {% endfor %}
+
+        <div class="container-contact glass-style" style="display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed rgba(255,255,255,0.2) !important;">
+            <h3 class="notebook-name">Create Notebook</h3>     
+            <a class="btn btn-action" href="{% url 'notes:notebook-create' %}">Add New Board</a>
+        </div>
     </div>
-
-
 {% endblock %}

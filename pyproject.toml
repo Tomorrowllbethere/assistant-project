@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "personal-assistant"
-version = "0.1.1"
+version = "0.1.0"
 description = ""
 authors = ["Yuliia Diakiv <uliadiakiv@gmail.com>"]
 readme = "README.md"
@@ -15,6 +15,9 @@ django-cloudinary-storage = "^0.3.0"
 alembic = "^1.13.2"
 pillow = "^10.4.0"
 image = "^1.5.33"
+dj-database-url = "^2.2.0"
+scrapy = "^2.11.2"
+scrapydo = "^0.2.2"
 
 
 [build-system]

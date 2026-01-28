@@ -61,7 +61,8 @@ class NotebookForm(forms.ModelForm):
         fields = ['list_name']
     def clean(self):
         cleaned_data = super().clean()
-        title = cleaned_data.get('title')
-        if not title:
-            raise forms.ValidationError('This field cannot be empty.')
-        return title
+            # Видаляємо помилку про юзера, бо ми додамо його у views.py
+        if 'user' in self._errors:
+            del self._errors['user']
+        return cleaned_data
+        

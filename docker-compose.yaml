@@ -1,0 +1,29 @@
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - assistant-project_postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: python core/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - CLOUDINARY_URL=${CLOUDINARY_URL} # Береться з твого .env
+    depends_on:
+      - db
+
+volumes:
+  assistant-project_postgres_data:
+    external: true

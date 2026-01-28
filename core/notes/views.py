@@ -14,15 +14,15 @@ now = timezone.now()
 @login_required
 def create_notelist(request):
     if request.method == "POST":
-        notelist_form = NotebookForm(request.POST)
-        if notelist_form.is_valid() and notelist_form:
-            notebook = notelist_form.save()
-            messages.success(request, 'Notebook saved successfully!')
-            return redirect(to='notes:notebook-list')
+        form = NotebookForm(request.POST)
+        if form.is_valid(): # Тепер це пройде!
+            notebook = form.save(commit=False)
+            notebook.user = request.user
+            notebook.save()
+            return redirect('notes:notebook-list')
     else:
-        form = NotebookForm() 
-        return render(request, 'notes/notebook_form.html', {'form': form})
-
+        form = NotebookForm()
+    return render(request, 'notes/notebook_form.html', {'form': form})
 
 
 @login_required
