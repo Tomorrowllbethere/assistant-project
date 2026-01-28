@@ -4,6 +4,7 @@ from .models import AllContact, Phone, Email
 from .forms import AllContactForm, PhoneFormSet, EmailFormSet
 from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
+from core import settings
 
 
 def home(request):
@@ -21,12 +22,16 @@ def contact_profile(request, pk):
 @login_required
 def add_contact(request):
     if request.method == 'POST':
-        all_contact_form = AllContactForm(request.POST)
+        all_contact_form = AllContactForm(request.POST, request.FILES)
         phone_formset = PhoneFormSet(request.POST)
         email_formset = EmailFormSet(request.POST)
         if all_contact_form.is_valid() and phone_formset.is_valid() and email_formset.is_valid():
             all_contact = all_contact_form.save(commit=False)
-            all_contact.host_id = 4
+            selected_preset = request.POST.get('selected_avatar_url')
+            if selected_preset and not request.FILES.get('avatar'):
+                all_contact.avatar_url = selected_preset
+            
+            all_contact.host_id = request.user.id
             all_contact.save()
             phone_formset.instance = all_contact
             phone_formset.save()
@@ -38,10 +43,13 @@ def add_contact(request):
         all_contact_form = AllContactForm()
         phone_formset = PhoneFormSet()
         email_formset = EmailFormSet()
+    presets = settings.DEFAULT_PRESETS
+
     return render(request, 'addressbook/add_contact.html', {
         'all_contact_form': all_contact_form,
         'phone_formset': phone_formset,
-        'email_formset': email_formset
+        'email_formset': email_formset,
+        'presents': presets
     })
 
 @login_required
@@ -79,11 +87,14 @@ def contact_list(request):
 def edit_contact(request, pk):
     contact = get_object_or_404(AllContact, pk=pk)
     if request.method == 'POST':
-        all_contact_form = AllContactForm(request.POST, instance=contact)
+        all_contact_form = AllContactForm(request.POST, request.FILES, instance=contact)
         phone_formset = PhoneFormSet(request.POST, instance=contact)
         email_formset = EmailFormSet(request.POST, instance=contact)
         if all_contact_form.is_valid() and phone_formset.is_valid() and email_formset.is_valid():
             all_contact = all_contact_form.save(commit=False)
+            if request.FILES.get('avatar'):
+                all_contact.avatar_url = None
+            
             all_contact.host_id = contact.host_id
             all_contact.save()
             phone_formset.instance = all_contact

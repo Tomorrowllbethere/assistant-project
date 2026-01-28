@@ -163,11 +163,27 @@ cloudinary.config(
 )
 
 DEFAULT_AVATARS = {
-    'female': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-1.png',
-    'male': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_1_sqybgi.png',
-    'neutral': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-4.png',
+    'F': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-1.png',
+    'M': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_1_sqybgi.png',
+    'N': 'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-4.png',
 }
 
+
+DEFAULT_PRESETS = [
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272304/avatar-2.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-3.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-4.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_4_p7vz8t.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272301/avatar-1.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_3_yqhcjf.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261896_1920_3_dv4ru5.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261896_1920_4_mgzvhx.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_1_sqybgi.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261900_1920_2_m4qjly.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272300/avatar-5261896_1920_2_vsitue.png',
+    'https://res.cloudinary.com/dwcy9crc0/image/upload/v1727272299/avatar-5261896_1920_1_qkjuqm.png'
+
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
