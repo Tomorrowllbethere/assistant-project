@@ -7,21 +7,56 @@
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'custom_auth/css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Kodchasan:wght@400;600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Kodchasan:wght@400;600&family=Montserrat:wght@400;600&family=Inspiration&display=swap" rel="stylesheet">
 </head>
 <body class="base-body">
-    <header>
+      <header>
         <nav class="top-nav">
-            <a href="{% url 'features:main' %}" class="nav-button">← Back to Main</a>
-            <span class="welcome-text">{% block header_title %}{% endblock %}</span>
+            <div class="nav-left">
+                {% if user.is_authenticated %}
+                    {% if request.resolver_match.url_name != 'main' %}
+                        <a href="{% url 'features:main' %}" class="nav-button">← Dashboard</a>
+                    {% endif %}
+                {% else %}
+                    {% if request.path != '/' %}
+                        <a href="/" class="nav-button">← Home</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <div class="nav-center">
+                <span class="welcome-text">{% block header_title %}ForkBoard{% endblock %}</span>
+            </div>
+            
+            <div class="nav-right">
+                {% if user.is_authenticated %}
+                    <div class="user-controls">
+                        <a href="{% url 'custom_auth:profile' %}" class="profile-link" title="My Profile">
+                            <img src="{{ user.profile.avatar.url }}" alt="avatar" class="user-avatar">
+                        </a>
+
+                        <form action="{% url 'custom_auth:logout' %}" method="post" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="logout-btn" title="Log Out">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    {% if request.resolver_match.url_name != 'login' %}
+                        <a href="{% url 'custom_auth:login' %}" class="nav-button small">Log In</a>
+                    {% endif %}
+                {% endif %}
+            </div>
         </nav>
     </header>
-
-    <main class="auth-layout">
-        <div class="content-wrapper">
-            {% block content %} 
-            {% endblock %}
-        </div>
+    <main class="main-content">
+        {% block content %} 
+        {% endblock %}
     </main>
 
     <footer>
@@ -30,6 +65,7 @@
             <div class="footer-tagline">Efficiency in every detail</div>
         </div>
     </footer>
+    {% block extra_js %}{% endblock %}
     <script src="{% static 'custom_auth/js/motion.js' %}"></script>
 </body>
 </html>

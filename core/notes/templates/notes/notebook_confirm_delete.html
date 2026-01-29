@@ -1,0 +1,27 @@
+{% extends "custom_auth/base.html" %}
+
+{% block title %} Delete Notebook {% endblock %}
+
+{% block content %}
+<div class="auth-layout"> 
+    <div class="container-contact glass-style delete-container">
+        <h2 class="auth-title text-danger">Delete Notebook?</h2>
+        
+        <p class="delete-warning">
+            Are you sure you want to delete <strong>"{{ object.list_name }}"</strong>?
+            <br>
+            <span class="small-warning">All notes inside will be lost forever.</span>
+        </p>
+
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            
+            <div class="button-row">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                
+                <a href="{% url 'notes:notebook-list' %}" class="btn btn-secondary text-center">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

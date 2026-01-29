@@ -1,103 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY PERSONAL ASSISTANT</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize@2.0.0/modern-normalize.min.css"/>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'custom_auth/css/style.css' %}" />
-    <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Kodchasan:wght@300;400;600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-    <header>
-        <nav class="top-nav">
-            <div class="user-info">
-                {% if user.profile.avatar %}
-                    <img src="{{ user.profile.avatar.url }}" alt="avatar" class="avatar-img"/>
-                {% else %}
-                    <div class="avatar-placeholder"></div>
-                {% endif %}
-                <span class="welcome-text">Welcome, <b>{{ user.username }}!</b></span>
-            </div>
-            <div class="auth-buttons">
-                <a class="nav-btn small" href="{% url 'custom_auth:profile' %}">Profile</a>
-                <a class="nav-btn small logout" href="{% url 'custom_auth:logout' %}">Logout</a>
-            </div>
+{% extends "custom_auth/base.html" %}
+{% load static %}
+
+{% block title %}ForkBoard | Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-compact-wrapper">
+
+    <aside class="mini-sidebar glass-style">
+        <nav class="icon-nav">
+            <a href="{% url 'addressbook:home' %}" class="icon-square" data-tooltip="Address Book">
+                <span class="nav-icon">📖</span>
+            </a>
+            
+            <a href="{% url 'notes:notebook-list' %}" class="icon-square" data-tooltip="My Notes">
+                <span class="nav-icon">📝</span>
+            </a>
+            
+            <a href="{% url 'cloud:file_list' %}" class="icon-square" data-tooltip="File Storage">
+                <span class="nav-icon">☁️</span>
+            </a>
         </nav>
-    </header>
+    </aside>
 
-    <div class="main-layout">
-        <aside class="sidebar side-left">
-            <h3>Tools</h3>
-            <p>Extra widgets here</p>
-        </aside>
-
-        <main class="content-center">
-            <section class="weather-section">
-                <div id="weather-widget">
-                     <div id="ww_5f8129147b1a4" v='1.3' loc='auto' a='{"t":"responsive","lang":"en","ids":[],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"image","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#81D4FA","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>
-                         Weather Data Source: <a href="https://wetterlang.de" id="ww_5f8129147b1a4_u" target="_blank">Wetter für 30 tage</a>
-                     </div>
+    <main class="main-workspace">
         
-                    <script async src="https://app2.weatherwidget.org/js/?id=ww_5f8129147b1a4"></script>
-                 </div>
-             </section>
+        <section class="widgets-row">
+            
+           <div class="widget-compact glass-style">
+                <h4 class="compact-title">Weather</h4>
+                <div class="weather-compact-box">
+                    <a class="weatherwidget-io" href="https://forecast7.com/en/52d2321d01/warsaw/" data-label_1="WARSAW" data-label_2="WEATHER" data-font="Ubuntu" data-icons="Climacons" data-theme="clear" >WARSAW WEATHER</a>
+                    <script>
+                    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+                    </script>
+                </div>
+            </div>
 
-            <nav class="app-navigation">
-                <a class="app-link" href="{% url 'addressbook:home' %}">ADDRESS BOOK</a>
-                <a class="app-link" href="{% url 'notes:notebook-list' %}">MY NOTES</a>
-                <a class="app-link" href="{% url 'cloud:file_list' %}">FILE LIST</a>
-            </nav>
+            <div class="widget-compact glass-style">
+                <h4 class="compact-title">Rates</h4>
+                <div class="rates-compact-list">
+                    {% if rates %}
+                        {% for currency, rate in rates.items %}
+                            <div class="rate-mini-row">
+                                <span class="c-name">{{ currency }}</span>
+                                <span class="c-line"></span>
+                                <span class="c-val">{{ rate }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <span class="small-text">Loading...</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </section>
 
-            <section class="birthdays-section">
-                <h2>Upcoming Birthdays</h2>
+        <section class="content-panel glass-style">
+            <h3 class="panel-header">This Week's Birthdays</h3>
+            
+            <div class="birthdays-compact-list">
                 {% if upcoming %}
                     {% for item in upcoming %}
-                    <div class="birthday-card">
-                        <div class="card-icon">🎂</div>
-                        <div class="card-details">
-                            <div class="card-row">
-                                <span class="label">Name:</span>
-                                <span class="value">{{ item.contact.fullname }}</span>
+                        <div class="bd-compact-item">
+                            <div class="bd-left">
+                                <span class="bd-emoji">🎂</span>
+                                <div class="bd-text">
+                                    <span class="bd-name-bold">{{ item.contact.fullname }}</span>
+                                    <span class="bd-age-small">{{ item.age }} y.o.</span>
+                                </div>
                             </div>
-                            <div class="card-row">
-                                <span class="label">Age:</span>
-                                <span class="value">{{ item.age }} years</span>
+                            <div class="bd-right">
+                                <span class="countdown-badge" data-remaining-seconds="{{ item.delta }}"></span>
+                                <a href="{% url 'addressbook:profile-contact' item.contact.pk %}" class="btn-mini">View</a>
                             </div>
-                            <p class="timer">Starts in: <span class="countdown" data-remaining-seconds="{{ item.delta }}"></span></p>
-                            <a class="action-link" href="{% url 'addressbook:profile-contact' item.contact.pk %}">See details →</a>
                         </div>
-                    </div>
                     {% endfor %}
                 {% else %}
-                    <p class="empty-msg">No birthdays this week</p>
-                {% endif %}
-            </section>
-        </main>
-
-        <aside class="sidebar side-right">
-            <h3>Exchange Rates</h3>
-            <div class="rates-box">
-                {% if rates %}
-                    {% for currency, rate in rates.items %}
-                        <div class="rate-item"><strong>{{ currency }}:</strong> {{ rate }}</div>
-                    {% endfor %}
-                {% else %}
-                    <p>Updating...</p>
+                    <p class="text-muted" style="padding: 10px;">No events upcoming.</p>
                 {% endif %}
             </div>
-        </aside>
-    </div>
+        </section>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 MY PERSONAL ASSISTANT</p>
-            <div class="footer-tagline">Efficiency in every detail</div>
-        </div>
-    </footer>
+    </main>
 
+</div>
+{% endblock %}
+
+{% block extra_js %}
     <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
-    <script src="{% static 'custom_auth/js/script.js' %}"></script>
-</body>
-</html>
+    
+{% endblock %}
