@@ -1,18 +1,39 @@
-
 {% extends "custom_auth/base.html" %}
 
+{% block title %} Create New Notebook {% endblock %}
 
 {% block content %}
+<div class="auth-layout"> 
+    <div class="container-contact glass-style">
+        <h2 class="auth-title">New Board</h2> 
+        
+        {% if form.non_field_errors %}
+            <div class="error-text" style="margin-bottom: 20px; color: #ff6b6b; text-align: center;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
- <!-- Форма для створення нового блоку нотаток -->
- <div class="container-contact">
-    <h3>Create Notebook</h3>     
-    <form method="post" action="{% url 'notes:notebook-create' %}">
-        {% csrf_token %}
-        {{ form.as_p }} <!-- Використовується форма для створення нового блоку нотаток -->
-        <button type="submit">Create</button>
-        <button class="but" type="reset" class="secondary">Reset</button>
-    </form>
+        <form method="post" action="{% url 'notes:notebook-create' %}" class="styled-form">
+            {% csrf_token %}
+            <input type="hidden" name="user" value="{{ request.user.id }}">
+            <div class="form-group">
+                <label for="{{ form.list_name.id_for_label }}">Notebook Name</label>
+                {{ form.list_name }} {% if form.list_name.errors %}
+                    <span class="error-text" style="color: #ff6b6b; font-size: 0.8rem;">
+                        {{ form.list_name.errors.0 }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn btn-action">Create</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+            </div>
+        </form>
+        
+        <div class="form-footer" style="margin-top: 20px; text-align: center;">
+            <a href="{% url 'notes:notebook-list' %}" class="btn-link">← Back to list</a>
+        </div>
+    </div>
 </div>
-
 {% endblock %}

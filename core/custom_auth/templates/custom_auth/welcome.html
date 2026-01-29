@@ -1,80 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>MY PERSONNAL ASSISTANT</title>
-    {% load static %}
-      <!-- нормалізатор -->
-	  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize@2.0.0/modern-normalize.min.css">
-    <link rel="stylesheet" href="{% static 'custom_auth/css/style.css' %}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inspiration&family=Italiana&family=Kodchasan:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-   <header>
-      <nav>
-          <li>
-            <a
-              class="nav-button"
-              href="{% url 'custom_auth:signup' %}"
-              role="button"
-              >Sign Up</a
-            >
-          </li>
-          <li>
-            <a
-              class="nav-button"
-              href="{% url 'custom_auth:login' %}"
-              role="button"
-              >Login</a
-            >
-          </li>
-      </nav>
-    </header>
-      
-    <main>
+{% extends "custom_auth/base.html" %}
 
-      {% block content %} {% endblock %} 
-      <div class="grid-container">
-        <div class="grid-container-1">
-            <p>Welcome</p>
-
-              
-              <section class="grid-assist">
-                <div class="layout-1">
-                  <p style="font-family: 'Kodchasan', sans-serif; font-size: 180px; color: #3b5223;" >ASSIST</p>
-                </div>
-                <div class="layout-2">
-                  <p style="font-family: 'Inspiration', sans-serif; font-weight: 400; font-size: 96px; color: #2f302d;">you</p>
-                </div>
-              </section>
+{% block content %}
+<div class="welcome-page-wrapper">
+    <div class="glass-hero">
+        <div class="reveal-box">
+            <h1 class="welcome-text-small">Welcome</h1>
+            
+            <div class="brand-motion">
+                <span class="letter-assist">ASSIST</span>
+                <span class="letter-you">you</span>
+            </div>
         </div>
-        <div class="grid-container-2">
-            <li>
-              <a
-                class="nav-button"
-                href="{% url 'custom_auth:signup' %}"
-                role="button"
-                >Sign Up</a
-              >
-            </li>
-            <li>
-              <a
-                class="nav-button"
-                href="{% url 'custom_auth:login' %}"
-                role="button"
-                >Login</a
-              >
-            </li>
         
+        <div class="fade-in-buttons">
+            <p class="tagline">Your personal space for productivity.</p>
+            <div class="button-group-clean">
+                <a href="{% url 'custom_auth:signup' %}" class="btn-clean">Start now</a>
+                <a href="{% url 'custom_auth:login' %}" class="btn-link">Sign In</a>
+            </div>
         </div>
-      </div>
- 
-    </main>
-    <footer>
-      <p>&copy; 2024 My personnal assistant</p>
-    </footer>
-  </body>
-</html>
+    </div>
+</div>
+
+
+{% endblock %}

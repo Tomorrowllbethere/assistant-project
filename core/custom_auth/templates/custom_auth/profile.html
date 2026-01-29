@@ -1,41 +1,54 @@
 {% extends "custom_auth/base.html" %}
 
+{% block title %} My Profile | {{ user.username }} {% endblock %}
+{% block header_title %} User Settings {% endblock %}
+
 {% block content %}
-<h1 class="hello">Profile page: {{user.username}}</h1>
+<div class="profile-container">
+    <h1 class="auth-title">Profile: {{ user.username }}</h1>
 
-
-
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="styled-form">
         {% csrf_token %}
-        <div class="form-row">
-            <div class="photo-cont" >
-                <img src="{{ user.profile.avatar.url }}" alt="avatar of user"  width="350" height="350"/>
+        
+        <div class="profile-layout">
+            <div class="profile-photo-section">
+                <div class="current-avatar-wrapper">
+                    <img src="{{ user.profile.avatar.url }}" alt="avatar" class="profile-preview-img"/>
+                </div>
+                <div class="form-group mt-3">
+                    <label class="file-label">Change Photo</label>
+                    <div class="custom-file-input">
+                        {{ profile_form.avatar }}
+                    </div>
+                    {% if profile_form.avatar.errors %}
+                        <span class="error-text">{{ profile_form.avatar.errors.0 }}</span>
+                    {% endif %}
+                </div>
             </div>
-            <div class="field">
-                <label class="small mb-1">Change Avatar:</label>
-                {{ profile_form.avatar }}
-                <span>{{ profile_form.errors.avatar }}</span>
+
+            <div class="profile-info-section">
+                <div class="form-group">
+                    <label><i class="icon">📅</i> Birthday date:</label>
+                    {{ profile_form.date_birth }}
+                    {% if profile_form.date_birth.errors %}
+                        <span class="error-text">{{ profile_form.date_birth.errors.0 }}</span>
+                    {% endif %}
+                </div> 
+
+                <div class="form-group">
+                    <label><i class="icon">📍</i> Your address:</label>
+                    {{ profile_form.address }}
+                    {% if profile_form.address.errors %}
+                        <span class="error-text">{{ profile_form.address.errors.0 }}</span>
+                    {% endif %}
+                </div> 
             </div>
         </div>
-        <div class="info-cont">
-            <div class="field">
-                <label class="date_birth">Birthday date:</label>
-                {{ profile_form.date_birth }}
-            </div> 
 
-            <div class="field">
-                <label class="address">Your address:</label>
-                {{ profile_form.address }}
-            </div> 
-            
-
-        </div>
-        <div class="button-group">
+        <div class="button-row">
             <button type="submit" class="btn btn-action">Save Changes</button>
-            <button type="reset" class="btn btn-action">Reset</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
         </div>
-
     </form>
-
+</div>
 {% endblock content %}
-

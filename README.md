@@ -12,18 +12,18 @@ it is a personnal assistant for shedules
 
 1. Вхід у проєкт
 git checkout dev-branch  # Переходимо в робочу гілку
-git pull origin main     # Забираємо оновлення з основної гілки (щоб не було конфліктів)
-make up                  # Запуск Docker (БД) + Poetry (Install) + Server
+git pull origin main     # Забираємо оновлення з основної гілки
+python core/manage.py runserver
 
 2. Активна розробка
 poetry add <назва>       # Додати пакет
-make install             # Оновити оточення
+poetry install           # Оновити оточення
 
 
             Якщо змінила models.py:
 
-make mm                  # Створити файл міграції (makemigrations)
-make migrate             # Прийняти зміни в базу (migrate)
+python core/manage.py makemigrations      # Створити файл міграції 
+python core/manage.py migrate             # Прийняти зміни в базу (migrate)
 
 3. Збереження та Пуш (Commit & Push)
 
@@ -32,6 +32,5 @@ git commit -m "Опис"     # Зафіксувати зміни з коротк
 git push                 # Відправити код на GitHub у гілку dev-branch
 
 4. Злиття (На GitHub)
-5. Вихід (Завершення дня)
+5. Вихід
 
-make stop                # Зупинити базу (Docker) та звільнити оперативну пам'ять
