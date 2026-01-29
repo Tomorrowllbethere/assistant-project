@@ -1,25 +1,209 @@
 {% extends "custom_auth/base.html" %}
 
+{% block title %}
+    {% if form.instance.pk %}Edit Note{% else %}Create Note{% endif %}
+{% endblock %}
+
+
 {% block content %}
-   
-  <div class="info-cont">
-    <h1>{% if note %}Edit Note{% else %}Create Note{% endif %}</h1>
-    <form method="post">
-      {% csrf_token %}
-      <!-- {{ form.as_p }} -->
+<div class="auth-layout">
+    <div class="container-contact glass-style note-editor-container">
+        <h2 class="auth-title">
+            {% if form.instance.pk %}Edit Note{% else %}Write Something New{% endif %}
+        </h2>
 
-      <li class="field">title: {{ form.title }}</li>
-      <li class="field">content: {{ form.content }}</li>
-      <li class="field">starts: {{ form.start_date }}</li>
-      <li class="field">ends: {{ form.end_date }}</li>
-      <li class="field">tags: {{ form.tags }}</li>
-      <li class="field">add new tags: {{ form.new_tags }}</li>
-      <li class="field">choose notebook: {{ form.notebook}}</li>
-      <button type="submit">{% if note %}Update{% else %}Create{% endif %}</button>
-      <button class="but" type="reset" class="secondary">Reset</button>
-    </form>
+        <form method="post" class="styled-form" id="noteForm">
+            {% csrf_token %}
+            
+            <div class="form-row-split">
+                <div class="form-group flex-grow-2">
+                    <label>Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="form-group flex-grow-1">
+                    <label>Notebook</label>
+                    {{ form.notebook }}
+                </div>
+            </div>
 
+            <div class="form-group">
+                <label>Content</label>
+                {{ form.content }}
+            </div>
+            
+            <div class="form-row-split">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    {{ form.end_date }}
+                </div>
+            </div>
 
-</div>      
-<a href="{% url 'notes:notebook-list' %}">Back to list</a>  
+            <div class="form-group">
+                <label>Tags</label>
+                
+                <div id="tags-container" class="tags-container"></div>
+
+                <div class="tag-input-wrapper">
+                    <input type="text" 
+                           id="tag-typer" 
+                           class="glass-input" 
+                           placeholder="Type tag (3+ chars)..." 
+                           autocomplete="off">
+                    
+                    <div id="suggestions-box" class="suggestions-list"></div>
+                </div>
+
+                <input type="hidden" name="mixed_tags" id="final-tags-input">
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn btn-action">
+                    {% if form.instance.pk %}Update Note{% else %}Save Note{% endif %}
+                </button>
+                <a href="{% url 'notes:notebook-list' %}" class="btn btn-secondary text-center">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const tagsContainer = document.getElementById('tags-container');
+    const tagInput = document.getElementById('tag-typer');
+    const suggestionsBox = document.getElementById('suggestions-box');
+    const hiddenInput = document.getElementById('final-tags-input');
+    
+    let myTags = [];
+
+    // 1. Додавання тегу
+    function addTag(tagName) {
+        tagName = tagName.trim();
+        if (!tagName || tagName.length < 2) return;
+        
+        if (myTags.includes(tagName)) {
+            tagInput.value = ''; 
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        myTags.push(tagName);
+        updateHiddenInput();
+        renderTags();
+        
+        tagInput.value = '';
+        suggestionsBox.style.display = 'none';
+        tagInput.focus();
+    }
+
+    // 2. Enter
+    tagInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            addTag(tagInput.value);
+        }
+    });
+
+    // 3. Видалення
+    function removeTag(tagName) {
+        myTags = myTags.filter(t => t !== tagName);
+        updateHiddenInput();
+        renderTags();
+    }
+
+    // 4. Рендер
+    function renderTags() {
+        tagsContainer.innerHTML = ''; 
+        myTags.forEach(tag => {
+            const chip = document.createElement('div');
+            chip.className = 'tag-chip';
+            chip.innerHTML = `
+                ${tag} 
+                <span class="tag-remove" onclick="removeTag('${tag}')">✕</span>
+            `;
+            tagsContainer.appendChild(chip);
+        });
+    }
+
+    function updateHiddenInput() {
+        hiddenInput.value = myTags.join(',');
+    }
+
+    // 5. Пошук
+    let debounceTimer;
+
+    tagInput.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        
+        if (query.length < 3) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetchSuggestions(query);
+        }, 300);
+    });
+
+    function fetchSuggestions(query) {
+        fetch(`{% url 'notes:tags-autocomplete' %}?term=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                showSuggestions(data, query);
+            })
+            .catch(err => console.error(err));
+    }
+
+    function showSuggestions(matches, userQuery) {
+        suggestionsBox.innerHTML = '';
+        let hasExactMatch = false;
+
+        if (matches.length > 0) {
+            matches.forEach(match => {
+                if (match.toLowerCase() === userQuery.toLowerCase()) hasExactMatch = true;
+                
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = match;
+                div.onclick = function() { addTag(match); };
+                suggestionsBox.appendChild(div);
+            });
+        } 
+        
+        if (!hasExactMatch) {
+            const createDiv = document.createElement('div');
+            createDiv.className = 'suggestion-item suggestion-new';
+            createDiv.innerHTML = `＋ Create new: <strong>"${userQuery}"</strong>`;
+            createDiv.onclick = function() { addTag(userQuery); };
+            suggestionsBox.appendChild(createDiv);
+        }
+
+        suggestionsBox.style.display = 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target !== tagInput && e.target !== suggestionsBox) {
+            suggestionsBox.style.display = 'none';
+        }
+    });
+
+    // 6. Завантаження даних
+    {% if form.instance.pk %}
+        {% for tag in form.instance.tags.all %}
+            addTag("{{ tag.tag }}");
+        {% endfor %}
+    {% endif %}
+
+    {% if form.mixed_tags.value %}
+        const errorData = "{{ form.mixed_tags.value }}";
+        if (errorData && !errorData.startsWith('[')) {
+            errorData.split(',').forEach(t => addTag(t));
+        }
+    {% endif %}
+</script>
 {% endblock %}

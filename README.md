@@ -34,3 +34,5 @@ git push                 # Відправити код на GitHub у гілку
 4. Злиття (На GitHub)
 5. Вихід
 
+docker-compose stop
+exit

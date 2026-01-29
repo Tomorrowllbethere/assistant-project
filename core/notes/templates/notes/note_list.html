@@ -1,19 +1,45 @@
 {% extends "custom_auth/base.html" %}
 
+{% block title %} Tag: {{ tag.name }} {% endblock %}
+
 {% block content %}
-    <h1>Note List</h1>
-    <h3>for {{tag}}</h3>
+<div class="glass-page-container">
+    
+    <div class="page-header-row">
+        <h2 class="hello-title">
+            Notes tagged: <span class="tag-highlight">#{{ tag.name }}</span>
+        </h2>
+        <a href="{% url 'notes:notebook-list' %}" class="btn-link">← All Notebooks</a>
+    </div>
+
+    <div class="glass-card list-view-card">
+        {% if notes %}
+            <ul class="clean-list large-list">
+                {% for note in notes %}
+                    <li>
+                        <a href="{% url 'notes:note-detail' note.id %}" class="note-row-link">
+                            <div class="note-row-content">
+                                <span class="bullet-large"></span>
+                                <span class="note-row-title">{{ note.title }}</span>
+                            </div>
+                            <span class="arrow-icon">→</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-state-box">
+                <p>No notes found with this tag.</p>
+                <a class="btn btn-action" href="{% url 'notes:note-create' %}">Create Note</a>
+            </div>
+        {% endif %}
+    </div>
+
     {% if notes %}
-    <span class="container-contact">
-        <ul>
-        {% for note in notes %}
-            <li class="note-content"><a href="{% url 'notes:note-detail' note.id %}">{{ note.title }}</a></li>
-        {% endfor %}
-        </ul>
-        <a class="btn btn-action" href="{% url 'notes:note-create' %}">Add Note</a>
-    </span>
+        <div class="bottom-actions">
+            <a class="btn btn-action" href="{% url 'notes:note-create' %}">＋ Add New Note</a>
+        </div>
     {% endif %}
 
+</div>
 {% endblock %}
-
-
