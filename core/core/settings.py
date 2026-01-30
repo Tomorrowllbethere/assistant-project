@@ -138,7 +138,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Директрії для статичних файлів, якщо у вас є більше одного додатка
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Наприклад, для загальних статичних файлів
+    BASE_DIR / "custom_auth/static/",  # Наприклад, для загальних статичних файлів
 ]
 
 # Де зберігати зібрані статичні файли при використанні collectstatic

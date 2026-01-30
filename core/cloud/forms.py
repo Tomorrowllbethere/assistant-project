@@ -12,3 +12,4 @@ class MoveFileForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['folder'].queryset = Folder.objects.filter(user=user)
+        self.fields['folder'].label_from_instance = lambda obj: obj.name

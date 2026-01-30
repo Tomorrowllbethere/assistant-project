@@ -1,38 +1,96 @@
+{% extends "custom_auth/base.html" %}
 
-{% extends "cloud/base.html" %}
+{% block title %}My Cloud{% endblock %}
+
 {% block content %}
-
-  <h2>Uploaded Files</h2>
-
-  <h1>Your Files</h1>
-
-<ul>
-    {% for file in files %}
-
-      <li>
-        {{ file.file }} - 
-        {% if file.folder %}
-            {{ file.folder.name }}
-        {% else %}
-            No Folder
-        {% endif %}
-        <a href="{% url 'cloud:move_file' file.id %}">Move</a>
-        <a href="{% url 'cloud:delete_file' file.id %}">Delete</a>
-      </li>
+<div class="auth-layout">
+    <div class="container-contact glass-style" style="max-width: 1200px; position: relative;">
         
-    {% endfor %}
-</ul>
+        <div class="header-placeholder"></div>
 
-<a href="{% url 'cloud:upload_file' %}">Add new files</a>
+        <div id="stickyHeader" class="sticky-header">
+            
+            <div class="header-top-row">
+                <div class="fm-title" style="font-size: 1.5rem; color: white;">
+                    {% if current_folder %}📂 {{ current_folder.name }}{% else %}☁️ My Cloud{% endif %}
+                </div>
+                <div class="fm-actions">
+                    <a href="{% url 'cloud:create_folder' %}" class="btn-glass-action">＋ New</a>
+                    <a href="{% url 'cloud:upload_file' %}" class="btn-glass-action">⬆ Upload</a>
+                </div>
+            </div>
 
+            <div class="domino-row">
+                <a href="{% url 'cloud:file_list' %}" class="domino-folder" title="All Files">
+                    <i class="fas fa-layer-group domino-icon"></i>
+                    <span class="domino-name">All Files</span>
+                </a>
 
+                {% for folder in folders %}
+                    <a href="{% url 'cloud:folder_files' folder.id %}" class="domino-folder" title="{{ folder.name }}">
+                        <i class="fas fa-folder domino-icon"></i>
+                        <span class="domino-name">{{ folder.name }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
 
-<h2>Folders</h2>
-<ul>
-    {% for folder in folders %}
-        <li><a href="{% url 'cloud:folder_files' folder.id %}"></a>{{ folder.name }}</a></li>
-    {% endfor %}
-</ul>
-<a href="{% url 'cloud:create_folder' %}">Create Folder</a>
-  
+        <div class="files-content" style="margin-top: 20px;">
+            {% if files %}
+                <div class="fm-grid">
+                    {% for media in files %}
+                        <div class="fm-file">
+                            <img src="{{ media.file.url }}" alt="file" class="fm-file-img">
+                            <div class="file-actions-overlay">
+                                <a href="{{ media.file.url }}" target="_blank" class="btn-file-action">View</a>
+                                <a href="{% url 'cloud:move_file' media.id %}" class="btn-file-action btn-move">Move</a>
+                                <a href="{% url 'cloud:delete_file' media.file.public_id %}" class="btn-file-action btn-delete" onclick="return confirm('Delete?');">Del</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; color: rgba(255,255,255,0.4); padding: 50px;">
+                    <p>No files here.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const header = document.getElementById("stickyHeader");
+        const placeholder = document.querySelector(".header-placeholder");
+        
+        // Отримуємо початкову позицію відносно верху сторінки
+        // (Оскільки container-contact має margin-top, нам треба це врахувати)
+        const offsetTrigger = 100; // Кількість пікселів скролу, після яких спрацює ефект
+
+        window.addEventListener("scroll", function() {
+            if (window.scrollY > offsetTrigger) {
+                header.classList.add("scrolled");
+            } else {
+                header.classList.remove("scrolled");
+            }
+        });
+        
+        // Синхронізація ширини шапки з контейнером при завантаженні
+        function syncWidth() {
+            if (!header.classList.contains("scrolled")) {
+                const containerWidth = document.querySelector(".container-contact").offsetWidth;
+                // Враховуємо padding контейнера (наприклад 40px)
+                header.style.maxWidth = (containerWidth - 40) + "px";
+            } else {
+                header.style.maxWidth = "600px"; // Ширина "Google bar"
+            }
+        }
+        
+        window.addEventListener("resize", syncWidth);
+        syncWidth(); // Запуск при старті
+    });
+</script>
 {% endblock %}

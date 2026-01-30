@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import MediaFile, Folder
 from .forms import FolderForm, MoveFileForm
 import cloudinary.uploader
@@ -12,9 +12,14 @@ logger = logging.getLogger(__name__)
 @login_required
 def upload_file(request):
     folders = Folder.objects.filter(user=request.user)
-    return render(request, 'cloud/upload_file.html', {'folders': folders})
-
-import logging
+    
+    # ДОДАНО: Беремо останні 9 файлів, сортуємо від нових до старих
+    recent_files = MediaFile.objects.filter(user=request.user).order_by('-uploaded_at')
+    
+    return render(request, 'cloud/upload_file.html', {
+        'folders': folders, 
+        'recent_files': recent_files  # Передаємо в шаблон
+    })
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +56,24 @@ def save_file(request):
 
 # Перегляд списку файлів
 @login_required
-def file_list(request):
-    folders = Folder.objects.filter(user=request.user)
-    files = MediaFile.objects.filter(user=request.user)
-    return render(request, 'cloud/file_list.html', {'files': files, 'folders': folders})
+@login_required
+def file_list(request, folder_id=None):
+  
+    if folder_id:
+        current_folder = get_object_or_404(Folder, id=folder_id, user=request.user)
+        files = MediaFile.objects.filter(user=request.user, folder=current_folder)
+        folders = [] 
+    else:
+        current_folder = None
+        folders = Folder.objects.filter(user=request.user)
+        files = MediaFile.objects.filter(user=request.user, folder__isnull=True)
 
+    context = {
+        'files': files,
+        'folders': folders,
+        'current_folder': current_folder
+    }
+    return render(request, 'cloud/file_list.html', context)
 
 # Створення папки
 @login_required

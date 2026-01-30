@@ -1,12 +1,44 @@
-{% extends "cloud/base.html" %}
+{% extends "custom_auth/base.html" %}
+
+{% block title %}Move File{% endblock %}
+
 {% block content %}
+<div class="auth-layout">
+    <div class="container-contact glass-style" style="max-width: 450px;">
+        
+        <h2 class="auth-title" style="text-align: center; margin-bottom: 20px;">
+            Move File
+        </h2>
 
-<h1>Move {{ file.file.name }} to another folder</h1>
+        <div class="move-preview-wrapper">
+            <img src="{{ file.file.url }}" alt="Preview" class="move-preview-img">
+            <div class="move-file-name">{{ file.file.public_id }}</div>
+        </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Move</button>
-</form>
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.folder.id_for_label }}">Select Destination Folder:</label>
+                {{ form.folder }}
+                
+                {% if form.folder.errors %}
+                    <div style="color: #ff6b6b; font-size: 0.85rem;">{{ form.folder.errors }}</div>
+                {% endif %}
+            </div>
 
+            <div class="button-row">
+                <button type="submit" class="btn btn-action" 
+                        style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); width: 100%;">
+                    Move Here
+                </button>
+                
+                <a href="{% url 'cloud:file_list' %}" class="btn btn-secondary text-center" style="margin-top: 10px; width: 100%;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
 {% endblock %}

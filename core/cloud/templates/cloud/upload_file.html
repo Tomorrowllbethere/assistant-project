@@ -1,107 +1,200 @@
-{% extends "cloud/base.html" %}
+{% extends "custom_auth/base.html" %}
+{% load static %}
+
+{% block title %}Upload to Cloud{% endblock %}
 
 {% block content %}
-<h2>Upload File</h2>
-<form id="uploadForm" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="file">Upload File:</label>
-    <input type="file" name="file" id="file" accept="image/*" required>
-    
-    <!-- Попередній перегляд фото -->
-    <div id="imagePreview" style="display: none;">
-        <h3>Preview:</h3>
-        <img id="previewImage" src="" alt="Image Preview" style="max-width: 300px; max-height: 300px;">
+<div class="auth-layout">
+    <div class="container-contact glass-style" style="max-width: 600px;">
+        
+        <h2 class="auth-title" style="margin-bottom: 25px;">Upload File</h2>
+
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label for="file" class="upload-area" id="drop-area">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <span class="upload-text">Click to browse or drag image here</span>
+                <input type="file" name="file" id="file" accept="image/*" required>
+            </label>
+
+            <div id="imagePreview" class="preview-container">
+                <h4 style="color: white; margin-bottom: 10px; font-size: 0.9rem;">Preview:</h4>
+                <img id="previewImage" src="" alt="Image Preview">
+            </div>
+
+            <div class="form-group-glass">
+                <label for="folder" class="glass-label"></label>
+                <select name="folder" id="folder" class="glass-select">
+                    <option value="">📂 No Folder </option>
+                    {% for folder in folders %}
+                        <option value="{{ folder.id }}">📁 {{ folder.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn btn-action" id="uploadBtn" 
+                        style="background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); border: none; color: #4a4a4a; font-weight: bold; width: 100%;">
+                    Start Upload
+                </button>
+                <a href="{% url 'cloud:file_list' %}" class="btn btn-secondary text-center" style="margin-top: 10px; width: 100%; display:block;">Cancel</a>
+            </div>
+
+            <div id="progressTextContainer" class="progress-text">Uploading... <span id="progressPercentage">0%</span></div>
+            <div id="uploadProgress" class="progress-wrapper">
+                <div id="progressBarFill" class="progress-fill"></div>
+            </div>
+
+            <div id="errorMessage" class="status-message status-error"></div>
+            <div id="successMessage" class="status-message status-success">File uploaded successfully! Redirecting...</div>
+        </form>
+
     </div>
+</div>
 
-    <label for="folder">Select Folder:</label>
-    <select name="folder" id="folder">
-        <option value="">No Folder</option>
-        {% for folder in folders %}
-            <option value="{{ folder.id }}">{{ folder.name }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Upload</button>
-
-    <!-- Прогрес завантаження -->
-    <div id="uploadProgress" style="display:none;">
-        <p>Uploading... <span id="progressPercentage">0%</span></p>
-        <progress id="progressBar" value="0" max="100"></progress>
-    </div>
-
-    <p id="errorMessage" style="color: red; display: none;"></p>
-    <p id="successMessage" style="color: green; display: none;">Upload successful!</p>
-</form>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <script>
-document.getElementById('file').addEventListener('change', function(event) {
-    // Перевірка розширення файлу
-    const file = event.target.files[0];
-    const allowedExtensions = ['image/jpeg', 'image/png', 'image/gif'];
-    
-    if (file && allowedExtensions.includes(file.type)) {
-        // Попередній перегляд фото
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('imagePreview').style.display = 'block';
-            document.getElementById('previewImage').src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+    const fileInput = document.getElementById('file');
+    const dropArea = document.getElementById('drop-area');
+    const previewContainer = document.getElementById('imagePreview');
+    const previewImage = document.getElementById('previewImage');
+    const uploadText = document.querySelector('.upload-text');
 
-        // Очищення попередніх повідомлень про помилки
-        document.getElementById('errorMessage').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'none';
-    } else {
-        // Помилка типу файлу
-        document.getElementById('errorMessage').style.display = 'block';
-        document.getElementById('errorMessage').textContent = 'File type is not supported. Please upload an image file (JPEG, PNG, GIF).';
+    // --- 1. ЛОГІКА ПОПЕРЕДНЬОГО ПЕРЕГЛЯДУ ---
+    fileInput.addEventListener('change', function(event) {
+        handleFiles(event.target.files);
+    });
+
+    // Drag & Drop ефекти
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
     }
-});
-function getCSRFToken() {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    return csrfToken;
-}
 
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-    event.preventDefault();  // Запобігаємо стандартній відправці форми
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('dragover'), false);
+    });
 
-    const file = document.getElementById('file').files[0];
-    const folderId = document.getElementById('folder').value;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', folderId);
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('dragover'), false);
+    });
 
-    // Показуємо прогрес завантаження
-    document.getElementById('uploadProgress').style.display = 'block';
+    dropArea.addEventListener('drop', handleDrop, false);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/cloud/save/', true);
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files; // Передаємо файли в інпут
+        handleFiles(files);
+    }
 
-    // Додаємо CSRF токен до заголовків запиту
-    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+    function handleFiles(files) {
+        const file = files[0];
+        const allowedExtensions = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-    // Відслідковуємо прогрес завантаження
-    xhr.upload.onprogress = function(event) {
-        if (event.lengthComputable) {
-            const percentage = Math.round((event.loaded / event.total) * 100);
-            document.getElementById('progressPercentage').textContent = `${percentage}%`;
-            document.getElementById('progressBar').value = percentage;
-        }
-    };
+        if (file && allowedExtensions.includes(file.type)) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContainer.style.display = 'block';
+                previewImage.src = e.target.result;
+                uploadText.textContent = `Selected: ${file.name}`; // Змінюємо текст
+            };
+            reader.readAsDataURL(file);
 
-    // Обробка відповіді від сервера
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('uploadProgress').style.display = 'none';
+            // Ховаємо помилки
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
         } else {
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorMessage').textContent = 'There was an error uploading the file. Please try again.';
+            showError('File type is not supported. Please upload an image file (JPEG, PNG, GIF).');
         }
-    };
+    }
 
-    xhr.send(formData);  // Відправляємо дані на сервер
-});
+    // --- 2. AJAX ЗАВАНТАЖЕННЯ ---
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    function showError(msg) {
+        const errDiv = document.getElementById('errorMessage');
+        errDiv.style.display = 'block';
+        errDiv.textContent = msg;
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const file = fileInput.files[0];
+        if (!file) {
+            showError("Please select a file first.");
+            return;
+        }
+
+        const folderId = document.getElementById('folder').value;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', folderId);
+
+        // UI Updates
+        document.getElementById('uploadProgress').style.display = 'block';
+        document.getElementById('progressTextContainer').style.display = 'block';
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('uploadBtn').textContent = "Uploading...";
+        document.getElementById('errorMessage').style.display = 'none';
+
+        const xhr = new XMLHttpRequest();
+        // ВАЖЛИВО: Використовуємо Django URL tag для правильного шляху
+        xhr.open('POST', "{% url 'cloud:save_file' %}", true);
+
+        xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+        // Прогрес
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentage = Math.round((event.loaded / event.total) * 100);
+                document.getElementById('progressPercentage').textContent = `${percentage}%`;
+                // Змінюємо ширину DIV-у замість value у progress bar
+                document.getElementById('progressBarFill').style.width = `${percentage}%`;
+            }
+        };
+
+        // Завершення
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('uploadBtn').textContent = "Done!";
+                
+                // Перенаправлення через 1.5 секунди
+                setTimeout(() => {
+                    window.location.href = "{% url 'cloud:file_list' %}";
+                }, 1500);
+            } else {
+                let errorMsg = 'Upload failed.';
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if(response.error) errorMsg = response.error;
+                } catch(e) {}
+                
+                showError(errorMsg);
+                document.getElementById('uploadProgress').style.display = 'none';
+                document.getElementById('progressTextContainer').style.display = 'none';
+                document.getElementById('uploadBtn').disabled = false;
+                document.getElementById('uploadBtn').textContent = "Start Upload";
+            }
+        };
+
+        xhr.onerror = function() {
+            showError("Network error occurred.");
+            document.getElementById('uploadBtn').disabled = false;
+        };
+
+        xhr.send(formData);
+    });
 </script>
-
 {% endblock %}
