@@ -1323,131 +1323,348 @@ footer {
     background: rgba(220, 38, 38, 0.85);
     box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
 }
-/* --- Скляний Файловий Менеджер --- */
+/* ============================================================
+   CLOUD STORAGE & FILE MANAGER (FULL FINAL VERSION)
+   ============================================================ */
 
-/* Заголовок розділу */
-.fm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* --- ЗАГАЛЬНІ ЕЛЕМЕНТИ --- */
+
+/* Градієнт для іконок (Персиковий) */
+.text-gradient-peach {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
-.fm-title {
-    font-size: 1.5rem;
-    color: white;
-    font-weight: 600;
-}
-
-/* Кнопки дій (Create, Upload) */
-.fm-actions {
-    display: flex;
-    gap: 15px;
-}
-
-.btn-glass-action {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-glass-action:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-}
-
-/* Навігація (хлібні крихти) */
-.fm-breadcrumbs {
-    margin-bottom: 20px;
-}
-.breadcrumb-link {
-    color: rgba(255, 255, 255, 0.6);
-    text-decoration: none;
-    font-size: 0.95rem;
-}
-.breadcrumb-link:hover { color: white; }
-.breadcrumb-separator { color: rgba(255, 255, 255, 0.4); margin: 0 8px; }
-.breadcrumb-current { color: #ffb7b2; font-weight: 600; } /* Персиковий акцент */
-
-/* --- СІТКА (GRID) --- */
-.fm-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 25px;
-    margin-bottom: 40px;
-}
-
+/* Розділювачі секцій */
 .section-label {
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 15px;
+    margin: 20px 0 15px 0;
     display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
 }
 
-/* --- ПАПКА (РОЖЕВА/ПЕРСИКОВА) --- */
-.fm-folder {
+/* ============================================================
+   1. STICKY HEADER (НЕВИДИМА ШАПКА -> СКЛЯНА ПІГУЛКА)
+   ============================================================ */
+
+/* Заглушка (Placeholder) - тримає місце, щоб контент не стрибав */
+.header-placeholder {
+    height: 140px; 
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Сама плаваюча шапка (ПОЧАТКОВИЙ СТАН - ПРОЗОРА) */
+.sticky-header {
+    position: fixed;
+    /* Відступ від верху (підлаштуй, якщо наїжджає на головне меню) */
+    top: 50px; 
+    width: 100%;
+    max-width: 1160px; /* Ширина контейнера */
+    z-index: 1000;
+    
+    /* Повністю прозорий фон */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    
+    padding: 10px 0;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* Пропускаємо кліки крізь пусте місце */
+    pointer-events: none;
+}
+
+/* Вмикаємо кліки для кнопок і папок */
+.sticky-header * {
+    pointer-events: auto;
+}
+
+/* --- СТАН ПРОКРУТКИ (ПЕРЕТВОРЕННЯ НА ПІГУЛКУ) --- */
+.sticky-header.scrolled {
+    top: 15px; /* Прилипає до верху */
+    max-width: 750px; /* Стає вужчою */
+    left: 50%;
+    transform: translateX(-50%); /* Центруємо */
+    
+    /* Скляний ефект вмикається тут */
+    background: rgba(185, 109, 149, 0.85); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px; /* Форма пігулки */
+    
+    padding: 5px 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5); /* Глибока тінь */
+}
+
+/* ============================================================
+   2. HEADER CONTENT (TITLE & BUTTONS)
+   ============================================================ */
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 15px;
+    transition: all 0.4s ease;
+    opacity: 1;
+    max-height: 100px;
+}
+
+/* При скролі ховаємо заголовок і кнопки */
+.sticky-header.scrolled .header-top-row {
+    margin-bottom: 0;
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.fm-title {
+    font-size: 1.6rem;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.fm-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Стиль кнопок (ВЕЛИКІ ТА СВІЖІ) */
+.btn-glass-action {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 20px; /* Більший розмір */
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-glass-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 154, 158, 0.3);
+}
+
+/* ============================================================
+   3. FOLDERS (FRESH ICONS LOOK)
+   ============================================================ */
+
+.domino-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 30px; /* Простір між папками */
+    padding: 10px 20px 25px 20px;
+    scrollbar-width: none;
+    align-items: flex-end;
+}
+.domino-row::-webkit-scrollbar { display: none; }
+
+/* Стиль однієї папки */
+.domino-folder {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-end;
     text-decoration: none;
-    transition: transform 0.2s;
-    cursor: pointer;
+    
+    /* Без фону і рамок - тільки іконка */
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     position: relative;
+    z-index: 1;
 }
 
-.fm-folder:hover {
-    transform: scale(1.05);
-}
-
-.folder-icon-wrapper {
-    font-size: 4.5rem; /* Розмір папки */
+/* Велика іконка папки */
+.domino-icon {
+    font-size: 4rem; /* Великий розмір */
+    margin-bottom: 5px;
     line-height: 1;
     
-    /* Градієнт для іконки (Персиковий/Рожевий) */
+    /* Персиковий градієнт */
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+    transition: transform 0.4s;
 }
 
-.fm-name {
-    margin-top: 8px;
-    color: rgba(255, 255, 255, 0.9);
+.domino-name {
     font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: center;
-    word-wrap: break-word;
-    max-width: 100%;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* --- ФАЙЛ (Зображення) --- */
+/* Hover ефект */
+.domino-folder:hover .domino-icon {
+    transform: scale(1.1) translateY(-5px);
+    filter: drop-shadow(0 10px 20px rgba(255, 154, 158, 0.4));
+}
+.domino-folder:hover .domino-name { color: white; }
+
+/* ============================================================
+   АРХІВНА КАРТОТЕКА (FILE CABINET STYLE)
+   ============================================================ */
+
+/* --- ТРАНСФОРМАЦІЯ ПРИ СКРОЛІ --- */
+
+.sticky-header.scrolled .domino-row {
+    justify-content: center;
+    gap: 0; 
+    padding-bottom: 5px;
+    /* Додаємо перспективу для кращого 3D ефекту */
+    perspective: 1000px; 
+}
+
+.sticky-header.scrolled .domino-folder {
+    /* 1. РОЗМІР: Робимо їх схожими на закладки */
+    width: 140px;   /* Широка, щоб влазило ім'я */
+    height: 55px;   /* Висота закладки */
+    
+    /* 2. СТИЛЬ: Повертаємо вигляд папки (фон і рамка) */
+    background: rgba(211, 130, 191, 0.467); /* Темне скло */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* Закруглення тільки зверху, як у вкладки */
+    border-radius: 12px 12px 0 0; 
+    border-bottom: none; /* Знизу наче йде вглиб */
+    
+    backdrop-filter: blur(15px);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3); /* Тінь збоку для об'єму */
+    
+    /* 3. НАКЛАДАННЯ (АРХІВНИЙ ЕФЕКТ) */
+    margin-right: -100px; /* Дуже сильне перекриття (видно лише 40px краю) */
+    
+    /* Вирівнювання вмісту */
+    align-items: flex-start; /* Все притискаємо до лівого краю (до виступу) */
+    padding: 5px 0 0 10px; /* Відступ зліва */
+    flex-direction: row; /* Іконка і текст в рядок */
+    gap: 8px;
+    
+    opacity: 1; /* Непрозорі, щоб перекривати сусідів */
+    transition: transform 0.3s ease, background 0.3s;
+}
+
+/* Остання папка не перекривається, щоб було видно кінець */
+.sticky-header.scrolled .domino-folder:last-child {
+    margin-right: 0;
+}
+
+/* --- ВМІСТ ПАПКИ В РЕЖИМІ АРХІВУ --- */
+
+.sticky-header.scrolled .domino-icon {
+    /* Маленька іконка зліва */
+    font-size: 1.4rem; 
+    margin-bottom: 0;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+}
+
+.sticky-header.scrolled .domino-name {
+    display: block; /* ТЕКСТ ЗАЛИШАЄТЬСЯ ВИДИМИМ! */
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+    
+    /* Трохи магії: якщо папка перекрита, текст обрізається візуально, 
+       але він там є. Це створює інтригу. */
+    opacity: 0.8;
+}
+
+
+/* --- HOVER EFFECT (СПОКІЙНИЙ) --- */
+
+/* При наведенні папка просто трохи висувається вгору ("Лиш трохи висунеться") */
+.sticky-header.scrolled .domino-folder:hover {
+    transform: translateY(-12px); /* Піднімається на 12px */
+    z-index: 50; /* Стає поверх сусідів */
+    
+    background: rgba(70, 70, 70, 0.95); /* Стає світлішою */
+    border-color: #ff9a9e; /* Персикова рамка */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.sticky-header.scrolled .domino-folder:hover .domino-name {
+    color: white;
+    opacity: 1;
+}
+
+/* Робимо активну папку теж трохи піднятою, щоб знати де ми */
+.sticky-header.scrolled .domino-folder.active-folder {
+    background: rgba(255, 154, 158, 0.15);
+    border-top: 2px solid #ff9a9e;
+    transform: translateY(-5px);
+}
+
+
+/* ============================================================
+   4. FILES GRID
+   ============================================================ */
+
+.files-content {
+    padding-top: 50px;  
+    position: relative;
+    z-index: 1; 
+}
+
+.fm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
 .fm-file {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
     aspect-ratio: 1 / 1;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(0,0,0,0.1);
-    transition: all 0.2s;
+    background: rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
 }
 
 .fm-file:hover {
     transform: scale(1.03);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    z-index: 5;
 }
 
 .fm-file-img {
@@ -1456,230 +1673,86 @@ footer {
     object-fit: cover;
 }
 
-/* Оверлей при наведенні на файл (для кнопок дій) */
 .file-actions-overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.7);
     opacity: 0;
     transition: opacity 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
+    backdrop-filter: blur(2px);
 }
 
-.fm-file:hover .file-actions-overlay {
-    opacity: 1;
-}
+.fm-file:hover .file-actions-overlay { opacity: 1; }
 
 .btn-file-action {
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.8rem;
     text-decoration: none;
     color: white;
     border: 1px solid rgba(255,255,255,0.3);
+    width: 80%;
+    text-align: center;
+    transition: background 0.2s;
 }
+.btn-file-action:hover { background: rgba(255,255,255,0.2); }
+.btn-move { background: rgba(59, 130, 246, 0.5); border-color: rgba(59, 130, 246, 0.5); }
+.btn-delete { background: rgba(239, 68, 68, 0.5); border-color: rgba(239, 68, 68, 0.5); }
 
-.btn-move { background: rgba(59, 130, 246, 0.6); } /* Blue */
-.btn-delete { background: rgba(239, 68, 68, 0.6); } /* Red */
 
-/* Стилізація конкретно цієї форми */
-    .folder-icon-large {
-        font-size: 3rem;
-        display: block;
-        margin: 0 auto 15px auto;
-        text-align: center;
-        /* Той самий персиковий градієнт */
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-    }
+/* ============================================================
+   5. FORMS (UPLOAD, CREATE, MOVE)
+   ============================================================ */
 
-    /* Примусова стилізація інпутів Django, щоб вони були "скляними" */
-    .styled-form input[type="text"] {
-        width: 100%;
-        padding: 12px 15px;
-        background: rgba(255, 255, 255, 0.1); /* Прозорий фон */
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 12px;
-        color: white;
-        font-size: 1rem;
-        outline: none;
-        transition: all 0.3s ease;
-    }
-
-    .styled-form input[type="text"]:focus {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: #ff9a9e; /* Персикова обводка при фокусі */
-        box-shadow: 0 0 10px rgba(255, 154, 158, 0.3);
-    }
-
-    /* Прибираємо стандартні лейбли Django, якщо хочемо свої красиві, 
-       або стилізуємо їх */
-    .styled-form label {
-        display: block;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 8px;
-        font-size: 0.95rem;
-    }
-
-    /* =========================================
-   UPLOAD PAGE STYLES
-   ========================================= */
-
-/* --- ЗОНА ЗАВАНТАЖЕННЯ (Drop Zone) --- */
+/* Скляна зона завантаження */
 .upload-area {
     display: block; 
-    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
     border-radius: 15px;
     padding: 40px 20px;
     text-align: center;
     background: rgba(255, 255, 255, 0.05);
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    
-    /* ВАЖЛИВО: Відступ знизу, щоб не наїжджало на селект */
-    margin-bottom: 40px; 
+    margin-bottom: 30px; 
 }
-
 .upload-area:hover, .upload-area.dragover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: #ff9a9e; /* Персикова обводка */
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #ff9a9e;
 }
-
 .upload-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    display: block;
+    font-size: 3.5rem;
+    margin-bottom: 15px;
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.upload-text {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1rem;
-}
-
-/* Приховуємо стандартний інпут */
-#file {
-    display: none;
-}
-
-/* --- ПОПЕРЕДНІЙ ПЕРЕГЛЯД (Preview) --- */
-.preview-container {
-    display: none; /* Сховано за замовчуванням */
-    text-align: center;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 15px;
-    border-radius: 12px;
-    
-    /* Відступи, щоб розштовхати сусідні елементи */
-    margin-top: -20px; 
-    margin-bottom: 40px; 
-}
-
-#previewImage {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-/* --- СКЛЯНИЙ SELECT (Вибір папки) --- */
-.form-group-glass {
-    margin-bottom: 30px;
-    position: relative;
-}
-
-.glass-label {
-    display: block;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-
-.glass-select {
+/* Скляні поля вводу */
+.glass-input, .glass-select, .styled-form input[type="text"], .styled-form select {
     width: 100%;
-    padding: 14px 15px;
-    background: rgba(30, 30, 30, 0.6); 
+    padding: 12px 15px;
+    background: rgba(20, 20, 20, 0.6); 
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
     color: white;
     font-size: 1rem;
     outline: none;
-    cursor: pointer;
-    transition: border 0.3s;
+    transition: all 0.3s;
     appearance: none;
-    -webkit-appearance: none;
-    
-    /* SVG стрілочка для краси */
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 15px top 50%;
-    background-size: 12px auto;
 }
-
-.glass-select:focus {
+.glass-input:focus, .glass-select:focus, .styled-form input:focus, .styled-form select:focus {
     border-color: #ff9a9e;
-    background-color: rgba(30, 30, 30, 0.8);
+    background: rgba(30, 30, 30, 0.8);
+    box-shadow: 0 0 10px rgba(255, 154, 158, 0.2);
 }
 
-.glass-select option {
-    background: #333;
-    color: white;
-    padding: 10px;
-}
-
-/* --- ПРОГРЕС БАР --- */
-.progress-wrapper {
-    display: none;
-    margin-top: 25px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    height: 12px;
-    overflow: hidden;
-    position: relative;
-}
-
-.progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
-    border-radius: 20px;
-    transition: width 0.2s ease;
-}
-
-.progress-text {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    margin-top: 10px;
-    display: none;
-}
-
-/* --- СТАТУСИ --- */
-.status-message {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    display: none;
-}
-.status-error { background: rgba(220, 38, 38, 0.2); color: #ffcccc; border: 1px solid rgba(220, 38, 38, 0.4); }
-.status-success { background: rgba(74, 222, 128, 0.2); color: #bbf7d0; border: 1px solid rgba(74, 222, 128, 0.4); }
-
-/* =========================================
-   MOVE FILE PAGE STYLES
-   ========================================= */
-
-/* Мініатюра файлу, який переміщуємо */
+/* Move Preview Image */
 .move-preview-img {
     width: 120px;
     height: 120px;
@@ -1689,102 +1762,30 @@ footer {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     margin: 0 auto 15px auto;
     display: block;
-    transition: transform 0.3s;
 }
 
-.move-preview-img:hover {
-    transform: scale(1.05) rotate(2deg);
-    border-color: #ff9a9e;
-}
-
-/* Назва файлу під картинкою */
-.move-file-name {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    margin-bottom: 25px;
-    font-style: italic;
-    word-break: break-all;
-}
-
-/* Стилізація Django-форми (селекта), якщо ми не можемо додати клас в HTML */
-.styled-form select {
-    width: 100%;
-    padding: 12px 15px;
-    background: rgba(30, 30, 30, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: white;
-    font-size: 1rem;
-    outline: none;
-    cursor: pointer;
-    margin-bottom: 20px;
-    appearance: none; /* Прибираємо стандартну стрілку */
-    -webkit-appearance: none;
-    
-    /* Стрілочка */
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 15px top 50%;
-    background-size: 12px auto;
-}
-
-.styled-form select:focus {
-    border-color: #ff9a9e;
-}
-
-.styled-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: rgba(255, 255, 255, 0.9);
-}
-/* =========================================
-   RECENT UPLOADS WIDGET
-   ========================================= */
-
+/* ============================================================
+   6. WIDGETS
+   ============================================================ */
 .recent-section {
-    margin-top: 40px;
+    margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-.recent-title {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-/* Сітка для мініатюр */
 .recent-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
-
 .recent-item {
-    position: relative;
-    aspect-ratio: 1 / 1; /* Квадрат */
-    border-radius: 10px;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255,255,255,0.2);
     transition: transform 0.2s;
 }
-
-.recent-item:hover {
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.4);
-}
-
-.recent-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Щоб картинка заповнювала квадрат */
-}
-
-/* Кнопка "View All" */
+.recent-item:hover { transform: scale(1.05); border-color: white; }
 .btn-view-all {
     display: block;
     width: 100%;
@@ -1795,158 +1796,7 @@ footer {
     text-decoration: none;
     border-radius: 10px;
     font-size: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     transition: background 0.3s;
-    border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
-.btn-view-all:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-/* =========================================
-   DYNAMIC STICKY HEADER & FOLDERS
-   ========================================= */
-
-/* Контейнер для шапки (резервує місце, щоб контент не стрибав) */
-.header-placeholder {
-    height: auto;
-    min-height: 140px; /* Висота шапки в розгорнутому стані */
-    margin-bottom: 20px;
-}
-
-/* Сама липка шапка */
-.sticky-header {
-    position: fixed; /* Фіксуємо відносно вікна */
-    top: 100px; /* Початкова позиція (залежить від твого layout) */
-    width: 100%;
-    max-width: 1160px; /* Ширина як у батьківського контейнера - падінги */
-    z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
-    /* Початковий вигляд (прозорий, просторий) */
-    background: transparent;
-    padding: 10px 0;
-    border-radius: 15px;
-}
-
-/* --- СТАН ПРОКРУТКИ (Ефект Google Bar) --- */
-.sticky-header.scrolled {
-    top: 20px; /* Прилипає до самого верху */
-    max-width: 800px; /* Стає вужчою */
-    left: 50%;
-    transform: translateX(-50%); /* Центруємо */
-    
-    /* Вигляд "пігулки" */
-    background: rgba(40, 40, 40, 0.85); /* Темніший фон */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px; /* Сильне заокруглення */
-    padding: 5px 30px; /* Компактні відступи */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-/* Вміст шапки (Заголовок і кнопки) */
-.header-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    transition: all 0.3s;
-}
-
-/* Ховаємо заголовок і кнопки при скролі, щоб залишити тільки папки? 
-   Або робимо їх дуже маленькими. Давай зробимо компактними. */
-.sticky-header.scrolled .header-top-row {
-    margin-bottom: 5px;
-    opacity: 0; /* При скролі ховаємо заголовок, залишаємо тільки папки-навігацію */
-    height: 0;
-    overflow: hidden;
-}
-
-/* --- ПАПКИ (FOLDERS ROW) --- */
-.domino-row {
-    display: flex;
-    overflow-x: auto;
-    gap: 15px; /* Початково: є проміжки, не накладаються */
-    padding-bottom: 10px;
-    scrollbar-width: none; /* Firefox */
-    transition: all 0.4s ease;
-}
-.domino-row::-webkit-scrollbar { display: none; }
-
-/* --- СТИЛЬ ПАПКИ --- */
-.domino-folder {
-    flex: 0 0 auto;
-    width: 100px;
-    height: 85px; /* Повна висота */
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.domino-icon {
-    font-size: 2.2rem;
-    margin-bottom: 5px;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    transition: transform 0.3s;
-}
-
-.domino-name {
-    font-size: 0.8rem;
-    color: white;
-    max-width: 90%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-/* --- ЕФЕКТ ДОМІНО ПРИ СКРОЛІ --- */
-.sticky-header.scrolled .domino-row {
-    justify-content: center; /* Центруємо папки в "пігулці" */
-    gap: 0;
-}
-
-.sticky-header.scrolled .domino-folder {
-    width: 60px; /* Вужчі */
-    height: 50px; /* Низькі (підрізані) */
-    background: transparent; /* Прибираємо фон карток */
-    border: none; /* Прибираємо рамки */
-    border-radius: 0;
-    margin-right: -15px; /* НАКЛАДАННЯ (Доміно) */
-    position: relative;
-    overflow: hidden; /* Обрізаємо все зайве знизу */
-    justify-content: flex-start; /* Притискаємо до верху */
-    padding-top: 5px;
-}
-
-.sticky-header.scrolled .domino-folder:last-child {
-    margin-right: 0;
-}
-
-.sticky-header.scrolled .domino-icon {
-    font-size: 1.8rem; /* Менша іконка */
-    margin-bottom: 0;
-}
-
-.sticky-header.scrolled .domino-name {
-    display: none; /* Ховаємо назви, коли згорнуто (тільки іконки) */
-}
-
-/* Hover ефект для згорнутих папок */
-.sticky-header.scrolled .domino-folder:hover {
-    transform: translateY(-10px) scale(1.3);
-    margin-right: 10px;
-    margin-left: 10px;
-    z-index: 100;
-    overflow: visible; /* Показуємо повністю при наведенні */
-}
+.btn-view-all:hover { background: rgba(255, 255, 255, 0.2); }
