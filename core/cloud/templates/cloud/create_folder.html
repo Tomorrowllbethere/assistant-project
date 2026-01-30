@@ -1,12 +1,45 @@
+{% extends "custom_auth/base.html" %}
 
-{% extends "cloud/base.html" %}
+{% block title %}Create New Folder{% endblock %}
+
+
 {% block content %}
+<div class="auth-layout">
+    <div class="container-contact glass-style" style="max-width: 500px;">
+        
+        <i class="fas fa-folder-plus folder-icon-large"></i>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Folder</button>
-</form>
+        <h2 class="auth-title" style="text-align: center; margin-bottom: 25px;">
+            Create New Folder
+        </h2>
 
+        <form method="post" class="styled-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Folder Name</label>
+                {{ form.name }}
+                
+                {% if form.name.errors %}
+                    <div style="color: #ff6b6b; font-size: 0.85rem; margin-top: 5px;">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+            </div>
 
+            <div class="button-row" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-action" style="background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); border: none; color: #4a4a4a; font-weight: bold;">
+                    Create Folder
+                </button>
+                
+                <a href="{% url 'cloud:file_list' %}" class="btn btn-secondary text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}

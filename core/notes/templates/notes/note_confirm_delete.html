@@ -1,14 +1,40 @@
 {% extends "custom_auth/base.html" %}
 
+{% block title %}Delete Note?{% endblock %}
+
 {% block content %}
+<div class="auth-layout">
+    <div class="container-contact glass-style">
+        
+        <div class="delete-content-wrapper">
+            <span class="warning-icon">⚠</span>
 
-    <h1>Are you sure you want to delete "{{ note.title }}"?</h1>
-    <p>This action cannot be undone.</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Yes, delete</button>
-    </form>
-    <a href="{% url 'notes:note_detail' note.id %}">Cancel</a>
-    <a href="{% url 'notes:notebook-list' %}">Back to list</a>
+            <h2 class="auth-title">Are you sure?</h2>
 
+            <p class="warning-text">
+                You are about to permanently delete the note:
+                <span class="note-title-highlight">"{{ note.title }}"</span>
+                <span style="color: #ff6b6b; font-size: 0.9rem; display: block;">This action cannot be undone.</span>
+            </p>
+            {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
+                    
+                <div class="delete-actions">
+                        <a href="{% url 'notes:note-detail' note.pk %}" class="btn-cancel">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="btn-danger-glass">
+                            Yes, delete it
+                        </button>
+                </div>
+            </form>
+                    
+                
+            
+        </div>
+
+    </div>
+</div>
 {% endblock %}

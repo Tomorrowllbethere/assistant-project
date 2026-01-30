@@ -1110,3 +1110,843 @@ footer {
 .suggestions-list::-webkit-scrollbar { width: 5px; }
 .suggestions-list::-webkit-scrollbar-track { background: transparent; }
 .suggestions-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
+
+/* =========================================
+   NOTE DETAIL STYLES (Перегляд нотатки)
+   ========================================= */
+
+/* --- Текст нотатки --- */
+.note-detail-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 25px;
+    white-space: pre-wrap; /* Зберігає абзаци та переноси рядків */
+}
+
+/* --- Секція мета-даних (Дати, Статус) --- */
+.meta-section {
+    background: rgba(0, 0, 0, 0.2); /* Темніша підкладка */
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.meta-row:last-child { margin-bottom: 0; }
+
+.meta-label { 
+    color: rgba(255, 255, 255, 0.6); 
+    margin-right: 10px; 
+}
+
+.meta-value { 
+    color: white; 
+    font-weight: 500; 
+}
+
+/* --- ТЕГИ ЯК ПОСИЛАННЯ (Зелені чіпи) --- */
+.tags-display-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tag-chip-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    
+    /* Зелений градієнт (як у кнопки Save) */
+    background: #4ade80; 
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    color: white;
+    
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.tag-chip-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
+    filter: brightness(1.1);
+    color: white; /* Текст залишається білим */
+}
+
+/* --- Таймер --- */
+.countdown-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 1rem;
+    color: #fcd34d; /* Жовтий акцент */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Кнопки дій --- */
+.action-bar {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+/* Стиль для червоної кнопки (Delete) */
+.btn-danger-glass {
+    background: rgba(220, 38, 38, 0.6); /* Червоний напівпрозорий */
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    color: white;
+    transition: background 0.3s;
+}
+
+.btn-danger-glass:hover {
+    background: rgba(220, 38, 38, 0.8);
+}
+
+/* Кнопка "Назад" */
+.back-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: white;
+}
+/* =========================================
+   DELETE CONFIRMATION STYLES
+   ========================================= */
+
+/* Контейнер для центрування всього вмісту */
+.delete-content-wrapper {
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Велика іконка (⚠) */
+.warning-icon {
+    font-size: 4rem;
+    color: #ff6b6b; /* М'який червоний */
+    margin-bottom: 15px;
+    display: block;
+    animation: pulse 2s infinite; /* Легка анімація пульсації */
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Текст попередження */
+.warning-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Виділення назви нотатки */
+.note-title-highlight {
+    color: #4ade80; /* Зелений акцент */
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Рядок кнопок */
+.delete-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+/* Кнопка "Cancel" (сіра) */
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Кнопка "Delete" (червона скляна) */
+.btn-danger-glass {
+    background: rgba(220, 38, 38, 0.65);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(220, 38, 38, 0.5);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger-glass:hover {
+    background: rgba(220, 38, 38, 0.85);
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+}
+/* --- Скляний Файловий Менеджер --- */
+
+/* Заголовок розділу */
+.fm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fm-title {
+    font-size: 1.5rem;
+    color: white;
+    font-weight: 600;
+}
+
+/* Кнопки дій (Create, Upload) */
+.fm-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-glass-action {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-glass-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Навігація (хлібні крихти) */
+.fm-breadcrumbs {
+    margin-bottom: 20px;
+}
+.breadcrumb-link {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+.breadcrumb-link:hover { color: white; }
+.breadcrumb-separator { color: rgba(255, 255, 255, 0.4); margin: 0 8px; }
+.breadcrumb-current { color: #ffb7b2; font-weight: 600; } /* Персиковий акцент */
+
+/* --- СІТКА (GRID) --- */
+.fm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.section-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* --- ПАПКА (РОЖЕВА/ПЕРСИКОВА) --- */
+.fm-folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.fm-folder:hover {
+    transform: scale(1.05);
+}
+
+.folder-icon-wrapper {
+    font-size: 4.5rem; /* Розмір папки */
+    line-height: 1;
+    
+    /* Градієнт для іконки (Персиковий/Рожевий) */
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.fm-name {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    text-align: center;
+    word-wrap: break-word;
+    max-width: 100%;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* --- ФАЙЛ (Зображення) --- */
+.fm-file {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.fm-file:hover {
+    transform: scale(1.03);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.fm-file-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Оверлей при наведенні на файл (для кнопок дій) */
+.file-actions-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.fm-file:hover .file-actions-overlay {
+    opacity: 1;
+}
+
+.btn-file-action {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-move { background: rgba(59, 130, 246, 0.6); } /* Blue */
+.btn-delete { background: rgba(239, 68, 68, 0.6); } /* Red */
+
+/* Стилізація конкретно цієї форми */
+    .folder-icon-large {
+        font-size: 3rem;
+        display: block;
+        margin: 0 auto 15px auto;
+        text-align: center;
+        /* Той самий персиковий градієнт */
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+
+    /* Примусова стилізація інпутів Django, щоб вони були "скляними" */
+    .styled-form input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        background: rgba(255, 255, 255, 0.1); /* Прозорий фон */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .styled-form input[type="text"]:focus {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #ff9a9e; /* Персикова обводка при фокусі */
+        box-shadow: 0 0 10px rgba(255, 154, 158, 0.3);
+    }
+
+    /* Прибираємо стандартні лейбли Django, якщо хочемо свої красиві, 
+       або стилізуємо їх */
+    .styled-form label {
+        display: block;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    /* =========================================
+   UPLOAD PAGE STYLES
+   ========================================= */
+
+/* --- ЗОНА ЗАВАНТАЖЕННЯ (Drop Zone) --- */
+.upload-area {
+    display: block; 
+    border: 2px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 15px;
+    padding: 40px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    
+    /* ВАЖЛИВО: Відступ знизу, щоб не наїжджало на селект */
+    margin-bottom: 40px; 
+}
+
+.upload-area:hover, .upload-area.dragover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ff9a9e; /* Персикова обводка */
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    display: block;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.upload-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+}
+
+/* Приховуємо стандартний інпут */
+#file {
+    display: none;
+}
+
+/* --- ПОПЕРЕДНІЙ ПЕРЕГЛЯД (Preview) --- */
+.preview-container {
+    display: none; /* Сховано за замовчуванням */
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 12px;
+    
+    /* Відступи, щоб розштовхати сусідні елементи */
+    margin-top: -20px; 
+    margin-bottom: 40px; 
+}
+
+#previewImage {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- СКЛЯНИЙ SELECT (Вибір папки) --- */
+.form-group-glass {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.glass-label {
+    display: block;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.glass-select {
+    width: 100%;
+    padding: 14px 15px;
+    background: rgba(30, 30, 30, 0.6); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+    transition: border 0.3s;
+    appearance: none;
+    -webkit-appearance: none;
+    
+    /* SVG стрілочка для краси */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 12px auto;
+}
+
+.glass-select:focus {
+    border-color: #ff9a9e;
+    background-color: rgba(30, 30, 30, 0.8);
+}
+
+.glass-select option {
+    background: #333;
+    color: white;
+    padding: 10px;
+}
+
+/* --- ПРОГРЕС БАР --- */
+.progress-wrapper {
+    display: none;
+    margin-top: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    height: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+    border-radius: 20px;
+    transition: width 0.2s ease;
+}
+
+.progress-text {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: none;
+}
+
+/* --- СТАТУСИ --- */
+.status-message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    display: none;
+}
+.status-error { background: rgba(220, 38, 38, 0.2); color: #ffcccc; border: 1px solid rgba(220, 38, 38, 0.4); }
+.status-success { background: rgba(74, 222, 128, 0.2); color: #bbf7d0; border: 1px solid rgba(74, 222, 128, 0.4); }
+
+/* =========================================
+   MOVE FILE PAGE STYLES
+   ========================================= */
+
+/* Мініатюра файлу, який переміщуємо */
+.move-preview-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    margin: 0 auto 15px auto;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.move-preview-img:hover {
+    transform: scale(1.05) rotate(2deg);
+    border-color: #ff9a9e;
+}
+
+/* Назва файлу під картинкою */
+.move-file-name {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    font-style: italic;
+    word-break: break-all;
+}
+
+/* Стилізація Django-форми (селекта), якщо ми не можемо додати клас в HTML */
+.styled-form select {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+    appearance: none; /* Прибираємо стандартну стрілку */
+    -webkit-appearance: none;
+    
+    /* Стрілочка */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 12px auto;
+}
+
+.styled-form select:focus {
+    border-color: #ff9a9e;
+}
+
+.styled-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
+/* =========================================
+   RECENT UPLOADS WIDGET
+   ========================================= */
+
+.recent-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recent-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Сітка для мініатюр */
+.recent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки */
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.recent-item {
+    position: relative;
+    aspect-ratio: 1 / 1; /* Квадрат */
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.recent-item:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.recent-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Щоб картинка заповнювала квадрат */
+}
+
+/* Кнопка "View All" */
+.btn-view-all {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-view-all:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+/* =========================================
+   DYNAMIC STICKY HEADER & FOLDERS
+   ========================================= */
+
+/* Контейнер для шапки (резервує місце, щоб контент не стрибав) */
+.header-placeholder {
+    height: auto;
+    min-height: 140px; /* Висота шапки в розгорнутому стані */
+    margin-bottom: 20px;
+}
+
+/* Сама липка шапка */
+.sticky-header {
+    position: fixed; /* Фіксуємо відносно вікна */
+    top: 100px; /* Початкова позиція (залежить від твого layout) */
+    width: 100%;
+    max-width: 1160px; /* Ширина як у батьківського контейнера - падінги */
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* Початковий вигляд (прозорий, просторий) */
+    background: transparent;
+    padding: 10px 0;
+    border-radius: 15px;
+}
+
+/* --- СТАН ПРОКРУТКИ (Ефект Google Bar) --- */
+.sticky-header.scrolled {
+    top: 20px; /* Прилипає до самого верху */
+    max-width: 800px; /* Стає вужчою */
+    left: 50%;
+    transform: translateX(-50%); /* Центруємо */
+    
+    /* Вигляд "пігулки" */
+    background: rgba(40, 40, 40, 0.85); /* Темніший фон */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px; /* Сильне заокруглення */
+    padding: 5px 30px; /* Компактні відступи */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Вміст шапки (Заголовок і кнопки) */
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+/* Ховаємо заголовок і кнопки при скролі, щоб залишити тільки папки? 
+   Або робимо їх дуже маленькими. Давай зробимо компактними. */
+.sticky-header.scrolled .header-top-row {
+    margin-bottom: 5px;
+    opacity: 0; /* При скролі ховаємо заголовок, залишаємо тільки папки-навігацію */
+    height: 0;
+    overflow: hidden;
+}
+
+/* --- ПАПКИ (FOLDERS ROW) --- */
+.domino-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px; /* Початково: є проміжки, не накладаються */
+    padding-bottom: 10px;
+    scrollbar-width: none; /* Firefox */
+    transition: all 0.4s ease;
+}
+.domino-row::-webkit-scrollbar { display: none; }
+
+/* --- СТИЛЬ ПАПКИ --- */
+.domino-folder {
+    flex: 0 0 auto;
+    width: 100px;
+    height: 85px; /* Повна висота */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.domino-icon {
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s;
+}
+
+.domino-name {
+    font-size: 0.8rem;
+    color: white;
+    max-width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* --- ЕФЕКТ ДОМІНО ПРИ СКРОЛІ --- */
+.sticky-header.scrolled .domino-row {
+    justify-content: center; /* Центруємо папки в "пігулці" */
+    gap: 0;
+}
+
+.sticky-header.scrolled .domino-folder {
+    width: 60px; /* Вужчі */
+    height: 50px; /* Низькі (підрізані) */
+    background: transparent; /* Прибираємо фон карток */
+    border: none; /* Прибираємо рамки */
+    border-radius: 0;
+    margin-right: -15px; /* НАКЛАДАННЯ (Доміно) */
+    position: relative;
+    overflow: hidden; /* Обрізаємо все зайве знизу */
+    justify-content: flex-start; /* Притискаємо до верху */
+    padding-top: 5px;
+}
+
+.sticky-header.scrolled .domino-folder:last-child {
+    margin-right: 0;
+}
+
+.sticky-header.scrolled .domino-icon {
+    font-size: 1.8rem; /* Менша іконка */
+    margin-bottom: 0;
+}
+
+.sticky-header.scrolled .domino-name {
+    display: none; /* Ховаємо назви, коли згорнуто (тільки іконки) */
+}
+
+/* Hover ефект для згорнутих папок */
+.sticky-header.scrolled .domino-folder:hover {
+    transform: translateY(-10px) scale(1.3);
+    margin-right: 10px;
+    margin-left: 10px;
+    z-index: 100;
+    overflow: visible; /* Показуємо повністю при наведенні */
+}

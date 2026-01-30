@@ -1,52 +1,82 @@
 {% extends "custom_auth/base.html" %}
+{% load static %}
 
+{% block title %}
+    {{ note.title }}
+{% endblock %}
 
 {% block content %}
-{% load static %}
-<div class="note-container">
-    <h1 class="note-title">{{ note.title }}</h1>
-    <p class="note-content">{{ note.content }}</p>
+<div class="auth-layout">
+    <div class="container-contact glass-style">
+        
+        <h2 class="auth-title" style="text-align: left; margin-bottom: 15px;">
+            {{ note.title }}
+        </h2>
 
-    <!-- Відображення тегів -->
-    <p class="note-tags">
-        <strong>Tags: </strong>
-        {% for tag in note.tags.all %}
-           <a href="{% url 'notes:tag-search' tag.pk %}"  class="tag" type="button">{{ tag.tag }}</a>{% if not forloop.last %},
-           {% endif %}
-        {% endfor %}
-    </p>
+        {% if note.tags.all %}
+        <div class="tags-display-container">
+            {% for tag in note.tags.all %}
+                <a href="{% url 'notes:tag-search' tag.pk %}" class="tag-chip-link">
+                    {{ tag.tag }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
 
-    <!-- Відображення відліку часу -->
-    {% if note.start_date > now %}
-        <p class="note-timing">
-            <strong>It starts in:</strong> 
-            <span id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}"></span>
-        </p>
-        <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
-    {% elif note.end_date %}
-        <p class="note-timing">
-            <strong>It ends in:</strong> 
-            <span id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}"></span>
-        </p>
-        <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
-    {% else %}
-        <p class="note-no-deadline">Take your time. You haven't any deadline.</p>
-    {% endif %}
+        <div class="note-detail-content">
+            {{ note.content }}
+        </div>
 
-    <!-- Статус нотатки -->
-    <p class="note-status"><strong>Status:</strong> {{ note.status|yesno:"Completed,Not completed" }}</p>
+        <div class="meta-section">
+            <div class="meta-row">
+                <span class="meta-label">Status:</span>
+                <span class="meta-value">
+                    {% if note.status %}
+                        <span style="color: #4ade80;">✔ Completed</span>
+                    {% else %}
+                        <span style="color: #fbbf24;">⏳ In Progress</span>
+                    {% endif %}
+                </span>
+            </div>
 
-    <!-- Блок з кнопками -->
-    <div class="button-group">
-        <a href="{% url 'notes:note-update' note.pk %}" class="btn btn-action">Edit</a>
-        <form method="post" action="{% url 'notes:note-delete' note.pk %}" class="delete-form">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-action">Delete</button>
-        </form>
-    </div>
+            <div class="meta-row">
+                {% if note.start_date > now %}
+                    <span class="meta-label">Starts in:</span>
+                    <span class="countdown-badge" id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}">Loading...</span>
 
-    <!-- Кнопка Back to list під кнопками Edit і Delete -->
-    <a class="btn btn-back" href="{% url 'notes:notebook-list' %}">Back to list</a>
+                {% elif note.end_date and note.end_date > now %}
+                    <span class="meta-label">Deadline:</span>
+                    <span class="countdown-badge" id="countdown" data-remaining-seconds="{{ time_diff_sec|safe }}">Loading...</span>
+
+                {% elif note.end_date %}
+                    <span class="meta-label">Deadline:</span>
+                    <span class="meta-value" style="color: #ff6b6b;">Expired</span>
+
+                {% else %}
+                    <span class="meta-label">Timing:</span>
+                    <span class="meta-value">No deadline set</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <a href="{% url 'notes:note-update' note.pk %}" class="btn btn-action" style="flex: 1; text-align: center;">
+                Edit Note
+            </a>
+
+            <a href="{% url 'notes:note-delete' note.pk %}" class="btn btn-secondary btn-danger-glass" style="flex: 1; text-align: center; text-decoration: none;">
+                Delete
+            </a>
+        </div>
+
+        <a href="{% url 'notes:notebook-list' %}" class="back-link">
+            ← Back to Notebook
+        </a>
+
+     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
+    <script src="{% static 'custom_auth/js/countdown.js' %}"></script>
 {% endblock %}
